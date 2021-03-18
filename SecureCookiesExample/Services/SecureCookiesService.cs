@@ -15,7 +15,7 @@ namespace SecureCookiesExample.Services
             IConfiguration config,
             IHttpContextAccessor httpContextAccessor)
         {
-            _dataProtector = dataProtectionProvider.CreateProtector(config["SecretKey"]);
+            _dataProtector = dataProtectionProvider.CreateProtector(nameof(SecureCookiesService));
             _http = httpContextAccessor.HttpContext;
         }
 
