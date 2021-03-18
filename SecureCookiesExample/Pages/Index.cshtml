@@ -1,0 +1,20 @@
+@page
+@model IndexPageModel
+
+@using SecureCookiesExample.Services
+@inject SecureCookiesService SecureCookies
+
+@{
+    var cookieData = SecureCookies.GetCookieValue<IndexPageModel.CookieExampleModel>(".ExampleCookie");
+}
+
+<h2>Cookies seguras</h2>
+@if (cookieData is not null)
+{
+    <p><strong>Encriptada:</strong> @Request.Cookies[".ExampleCookie"]</p>
+    <p><strong>Desencriptada:</strong> @cookieData.Name @cookieData.UserId</p>
+}
+else
+{
+    <p>Refresh again!</p>
+}
