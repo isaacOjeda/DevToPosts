@@ -1,0 +1,14 @@
+﻿@page
+@model IndexModel
+
+@using MultiTenantSingleDatabase.Infrastructure.Multitenancy
+
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome @HttpContext.GetTenant()?.Items["Name"] </h1>    
+</div>
