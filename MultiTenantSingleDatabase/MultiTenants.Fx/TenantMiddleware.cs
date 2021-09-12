@@ -15,8 +15,10 @@ public class TenantMiddleware<T> where T : Tenant
     {
         if (!context.Items.ContainsKey(AppConstants.HttpContextTenantKey))
         {
-            var tenantStore = context.RequestServices.GetService(typeof(ITenantStore<T>)) as ITenantStore<T>;
-            var resolutionStrategy = context.RequestServices.GetService(typeof(ITenantResolutionStrategy)) as ITenantResolutionStrategy;
+            var tenantStore = context.RequestServices.GetService(typeof(ITenantStore<T>)) as ITenantStore<T>
+                ?? throw new ArgumentNullException(nameof(ITenantStore<T>));
+            var resolutionStrategy = context.RequestServices.GetService(typeof(ITenantResolutionStrategy)) as ITenantResolutionStrategy
+                ?? throw new ArgumentNullException(nameof(ITenantResolutionStrategy));
 
             var identifier = await resolutionStrategy.GetTenantIdentifierAsync();
             var tenant = await tenantStore.GetTenantAsync(identifier);

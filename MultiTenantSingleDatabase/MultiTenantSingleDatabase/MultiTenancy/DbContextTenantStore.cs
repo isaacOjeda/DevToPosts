@@ -26,7 +26,7 @@ public class DbContextTenantStore : ITenantStore<Tenant>
         {
             var entity = await _context.Tenants
                 .FirstOrDefaultAsync(q => q.Identifier == identifier)
-                    ?? throw new ArgumentException($"identifier no es un tenant válido");
+                    ?? throw new ArgumentNullException($"identifier no es un tenant válido");
 
             tenant = new Tenant(entity.TenantId, entity.Identifier);
 

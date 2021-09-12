@@ -1,16 +1,8 @@
 ﻿
 namespace MultiTenants.Fx;
 
-public class Tenant
+public record Tenant(int Id, string Identifier)
 {
-    public Tenant(int id, string identifier)
-    {
-        Id = id;
-        Identifier = identifier;
-        Items = new Dictionary<string, object>();
-    }
-
-    public int Id { get; }
-    public string Identifier { get; }
-    public Dictionary<string, object> Items { get; }
+    public Dictionary<string, object> Items { get; init; } =
+        new Dictionary<string, object>();
 }
