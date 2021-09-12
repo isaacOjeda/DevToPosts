@@ -1,5 +1,7 @@
 ﻿
-namespace MultiTenantSingleDatabase.Infrastructure.Multitenancy;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace MultiTenants.Fx;
 
 public static class ServiceCollectionExtensions
 {

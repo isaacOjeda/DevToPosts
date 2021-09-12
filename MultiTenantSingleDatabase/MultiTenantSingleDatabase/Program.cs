@@ -1,6 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
-using MultiTenantSingleDatabase.Infrastructure.Multitenancy;
+using MultiTenants.Fx;
+using MultiTenantSingleDatabase.MultiTenancy;
 using MultiTenantSingleDatabase.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);

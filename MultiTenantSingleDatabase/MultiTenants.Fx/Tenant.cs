@@ -1,5 +1,5 @@
 ﻿
-namespace MultiTenantSingleDatabase.Infrastructure.Multitenancy;
+namespace MultiTenants.Fx;
 
 public class Tenant
 {

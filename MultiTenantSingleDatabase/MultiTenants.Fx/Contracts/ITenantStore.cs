@@ -1,5 +1,5 @@
 ﻿
-namespace MultiTenantSingleDatabase.Infrastructure.Multitenancy;
+namespace MultiTenants.Fx;
 
 public interface ITenantStore<T> where T : Tenant
 {

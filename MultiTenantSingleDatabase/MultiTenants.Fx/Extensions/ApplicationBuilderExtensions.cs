@@ -1,5 +1,7 @@
 ﻿
-namespace MultiTenantSingleDatabase.Infrastructure.Multitenancy;
+using Microsoft.AspNetCore.Builder;
+
+namespace MultiTenants.Fx;
 
 public static class ApplicationBuilderExtensions
 {

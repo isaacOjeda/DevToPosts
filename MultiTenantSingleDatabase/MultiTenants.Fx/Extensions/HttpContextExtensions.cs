@@ -1,7 +1,8 @@
 ﻿
-using MultiTenantSingleDatabase.Helpers;
+using Microsoft.AspNetCore.Http;
 
-namespace MultiTenantSingleDatabase.Infrastructure.Multitenancy;
+namespace MultiTenants.Fx;
+
 
 /// <summary>
 /// Extensiones de HttpContext para hacer multi-tenancy más fácil de usar

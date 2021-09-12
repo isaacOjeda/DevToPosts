@@ -1,5 +1,7 @@
 ﻿
-namespace MultiTenantSingleDatabase.Infrastructure.Multitenancy;
+using MultiTenants.Fx;
+
+namespace MultiTenantSingleDatabase.MultiTenancy;
 public class HostResolutionStrategy : ITenantResolutionStrategy
 {
     private readonly HttpContext? _httpContext;

@@ -1,7 +1,7 @@
 ﻿
-using MultiTenantSingleDatabase.Helpers;
+using Microsoft.AspNetCore.Http;
 
-namespace MultiTenantSingleDatabase.Infrastructure.Multitenancy;
+namespace MultiTenants.Fx;
 public class TenantMiddleware<T> where T : Tenant
 {
     private readonly RequestDelegate next;
