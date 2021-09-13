@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiTenantSingleDatabase", "MultiTenantSingleDatabase\MultiTenantSingleDatabase.csproj", "{F728C18D-8A2F-4D9C-B198-80EDFB444899}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTenants.Fx", "MultiTenants.Fx\MultiTenants.Fx.csproj", "{DCF9EEF4-A5C0-40E1-9559-ABF4921D7ABC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiTenants.Fx", "MultiTenants.Fx\MultiTenants.Fx.csproj", "{DCF9EEF4-A5C0-40E1-9559-ABF4921D7ABC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

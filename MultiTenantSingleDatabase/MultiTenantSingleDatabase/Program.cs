@@ -16,6 +16,9 @@ builder.Services.AddMultiTenancy()
 builder.Services.AddDbContext<TenantAdminDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TenantAdmin")));
 
+builder.Services.AddDbContext<MultiTenantDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MultiTenant")));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
