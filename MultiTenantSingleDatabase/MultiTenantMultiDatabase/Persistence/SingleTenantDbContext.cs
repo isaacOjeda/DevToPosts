@@ -1,11 +1,9 @@
 ﻿
-namespace MultiTenantSingleDatabase.Persistence;
 using Microsoft.EntityFrameworkCore;
 using MultiTenants.Fx.Contracts;
 using MultiTenantSingleDatabase.Models;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+
+namespace MultiTenantSingleDatabase.Persistence;
 
 public class SingleTenantDbContext : DbContext
 {
