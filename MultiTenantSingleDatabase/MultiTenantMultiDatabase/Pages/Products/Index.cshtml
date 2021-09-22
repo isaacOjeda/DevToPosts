@@ -1,0 +1,25 @@
+﻿@page
+@model MultiTenantMultiDatabase.Pages.Products.IndexModel
+@{
+}
+
+
+<h1>Productos</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Id</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.Products)
+        {
+            <tr>
+                <td>@product.ProductId</td>
+                <td>@product.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>
