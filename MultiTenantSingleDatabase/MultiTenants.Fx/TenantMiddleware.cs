@@ -1,5 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Http;
+using System;
+using System.Threading.Tasks;
 
 namespace MultiTenants.Fx;
 public class TenantMiddleware<T> where T : Tenant

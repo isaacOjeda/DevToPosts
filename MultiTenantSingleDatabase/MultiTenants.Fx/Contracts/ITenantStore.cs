@@ -1,4 +1,6 @@
 ﻿
+using System.Threading.Tasks;
+
 namespace MultiTenants.Fx;
 
 public interface ITenantStore<T> where T : Tenant

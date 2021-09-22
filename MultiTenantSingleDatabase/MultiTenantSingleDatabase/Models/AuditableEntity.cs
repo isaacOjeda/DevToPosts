@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace MultiTenantSingleDatabase.Models;
 public class AuditableEntity
 {

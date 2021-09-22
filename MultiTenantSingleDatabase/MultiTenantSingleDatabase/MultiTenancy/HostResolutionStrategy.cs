@@ -1,5 +1,7 @@
 ﻿
+using Microsoft.AspNetCore.Http;
 using MultiTenants.Fx;
+using System.Threading.Tasks;
 
 namespace MultiTenantSingleDatabase.MultiTenancy;
 public class HostResolutionStrategy : ITenantResolutionStrategy

@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using MultiTenants.Fx;
 using MultiTenantSingleDatabase.Persistence;
+using System;
+using System.Threading.Tasks;
 
 public class DbContextTenantStore : ITenantStore<Tenant>
 {
