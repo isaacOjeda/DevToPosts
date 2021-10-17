@@ -96,14 +96,18 @@ public class ProductsModule : ICarterModule
 
     private static async Task<IResult> DeleteProduct(int productId, MyDbContext context)
     {
-        var exists = await context.Products.AnyAsync(q => q.ProductId == productId);
+        var product = await context.Products.FirstOrDefaultAsync(q => q.ProductId == productId);
 
-        if (!exists)
+        if (product is null)
         {
             return Results.Problem(
                 detail: $"El producto con ID {productId} no existe",
                 statusCode: StatusCodes.Status404NotFound);
         }
+
+        context.Remove(product);
+
+        await context.SaveChangesAsync();
 
         return Results.NoContent();
     }
