@@ -1,6 +1,6 @@
 ﻿namespace MinimalApis.Api.Extensions;
 
-public static class ApplicationBuilderExtensions
+public static class WebApplicationExtensions
 {
     public static WebApplication MapSwagger(this WebApplication app)
     {

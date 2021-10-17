@@ -6,6 +6,7 @@ using MinimalApis.Api.Extensions;
 using MinimalApis.Api.Persistence;
 
 namespace MinimalApis.Api.Features.Products;
+
 public class ProductsModule : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
@@ -20,6 +21,15 @@ public class ProductsModule : ICarterModule
         app.MapPost("api/products", CreateProduct)
             .Produces<Product>(StatusCodes.Status201Created)
             .ProducesValidationProblem();
+
+        app.MapPut("api/products/{productId}", UpdateProduct)
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesValidationProblem();
+
+        app.MapDelete("api/products/{productId}", DeleteProduct)
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status404NotFound);
     }
 
     private static async Task<IResult> GetProducts(MyDbContext context)
@@ -56,5 +66,45 @@ public class ProductsModule : ICarterModule
         await context.SaveChangesAsync();
 
         return Results.Created($"api/products/{product.ProductId}", product);
+    }
+
+    private static async Task<IResult> UpdateProduct(
+        HttpRequest request, MyDbContext context, int productId, Product product)
+    {
+        var result = request.Validate(product);
+
+        if (!result.IsValid)
+        {
+            return Results.ValidationProblem(result.ToValidationProblems());
+        }
+
+        var exists = await context.Products.AnyAsync(q => q.ProductId == productId);
+
+        if (!exists)
+        {
+            return Results.Problem(
+                detail: $"El producto con ID {productId} no existe",
+                statusCode: StatusCodes.Status404NotFound);
+        }
+
+        context.Entry(product).State = EntityState.Modified;
+
+        await context.SaveChangesAsync();
+
+        return Results.NoContent();
+    }
+
+    private static async Task<IResult> DeleteProduct(int productId, MyDbContext context)
+    {
+        var exists = await context.Products.AnyAsync(q => q.ProductId == productId);
+
+        if (!exists)
+        {
+            return Results.Problem(
+                detail: $"El producto con ID {productId} no existe",
+                statusCode: StatusCodes.Status404NotFound);
+        }
+
+        return Results.NoContent();
     }
 }
