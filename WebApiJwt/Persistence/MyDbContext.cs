@@ -6,8 +6,7 @@ namespace WebApiJwt.Persistence;
 
 public class MyDbContext : IdentityDbContext<User>
 {
-    public MyDbContext(DbContextOptions<MyDbContext> options): base(options)
+    public MyDbContext(DbContextOptions<MyDbContext> options) : base(options)
     {
-        
     }
 }

@@ -1,24 +1,26 @@
-using WebApiJwt.Persistence;
-using Microsoft.AspNetCore.Identity;
-using WebApiJwt.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using WebApiJwt.Models;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using WebApiJwt.Entities;
+using WebApiJwt.Models;
+using WebApiJwt.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSqlite<MyDbContext>(builder.Configuration.GetConnectionString("Default"));
-builder.Services.AddIdentityCore<User>()
+builder.Services
+    .AddSqlite<MyDbContext>(builder.Configuration.GetConnectionString("Default"))
+    .AddIdentityCore<User>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<MyDbContext>();
 
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services
+    .AddHttpContextAccessor()
+    .AddAuthorization()
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -69,7 +71,7 @@ app.MapPost("/token", async (AuthenticateRequest request, UserManager<User> user
         issuer: builder.Configuration["Jwt:Issuer"],
         audience: builder.Configuration["Jwt:Audience"],
         claims: claims,
-        expires: DateTime.Now.AddMinutes(1),
+        expires: DateTime.Now.AddMinutes(720),
         signingCredentials: credentials);
 
     var jwt = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
@@ -79,11 +81,11 @@ app.MapPost("/token", async (AuthenticateRequest request, UserManager<User> user
         AccessToken = jwt
     });
 });
-app.MapGet("/me", ([FromServices]IHttpContextAccessor contextAccessor) => 
+app.MapGet("/me", ([FromServices] IHttpContextAccessor contextAccessor) =>
 {
     var user = contextAccessor.HttpContext.User;
 
-    return Results.Ok(new 
+    return Results.Ok(new
     {
         Claims = user.Claims.Select(s => new
         {
@@ -98,7 +100,6 @@ app.MapGet("/me", ([FromServices]IHttpContextAccessor contextAccessor) =>
 .RequireAuthorization();
 
 app.Run();
-
 
 async Task SeedData()
 {
