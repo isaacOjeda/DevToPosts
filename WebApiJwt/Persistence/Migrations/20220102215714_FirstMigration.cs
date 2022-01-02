@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace WebApiJwt.Persistence
+namespace WebApiJwt.Persistence.Migrations
 {
     public partial class FirstMigration : Migration
     {
