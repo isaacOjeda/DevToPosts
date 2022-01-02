@@ -81,7 +81,7 @@ app.MapPost("/token", async (AuthenticateRequest request, UserManager<User> user
         AccessToken = jwt
     });
 });
-app.MapGet("/me", ([FromServices] IHttpContextAccessor contextAccessor) =>
+app.MapGet("/me", (IHttpContextAccessor contextAccessor) =>
 {
     var user = contextAccessor.HttpContext.User;
 
