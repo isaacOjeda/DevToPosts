@@ -1,0 +1,25 @@
+﻿@page
+@using Microsoft.AspNetCore.Authentication
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+@if(User.Identity!.IsAuthenticated)
+{
+    <h2>Welcome @User.Identity.Name</h2>
+
+    <ul>
+        @foreach(var claim in @User.Claims)
+        {
+            <li>@claim.Type: @claim.Value</li>
+        }
+        <li>access_token: @(await HttpContext.GetTokenAsync("access_token"))</li>
+        <li>id_token: @(await HttpContext.GetTokenAsync("id_token"))</li>
+    </ul>
+}
