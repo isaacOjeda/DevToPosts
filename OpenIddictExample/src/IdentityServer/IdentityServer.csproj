@@ -13,6 +13,7 @@
 	<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.1" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.1" />
+
 	<PackageReference Include="OpenIddict" Version="3.0.0" />
 	<PackageReference Include="OpenIddict.AspNetCore" Version="3.0.0" />
 	<PackageReference Include="OpenIddict.EntityFrameworkCore" Version="3.0.0" />

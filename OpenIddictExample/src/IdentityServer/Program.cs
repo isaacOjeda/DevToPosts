@@ -88,7 +88,7 @@ app.MapRazorPages();
 app.MapControllers();
 
 
-// await SeedDefaultClients();
+await SeedDefaultClients();
 
 app.Run();
 
@@ -106,7 +106,7 @@ async Task SeedDefaultClients()
 
     await context.Database.EnsureCreatedAsync();
 
-    var client = await manager.FindByClientIdAsync("client-web-app");
+    var client = await manager.FindByClientIdAsync("clientwebapp");
 
     if (client is null)
     {
