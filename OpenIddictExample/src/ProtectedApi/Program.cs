@@ -1,40 +1,38 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 builder.Services.AddAuthentication("Bearer")
       .AddJwtBearer("Bearer", options =>
       {
-          options.Authority = builder.Configuration["Services:Identity"];
+          options.Authority = "https://localhost:7001";
           options.Audience = "test";
       });
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("ApiScope", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-    });
-});
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+
+app.MapGet("/me", (HttpRequest request) =>
+{
+    var user = request.HttpContext.User;
+
+    return Results.Ok(new
+    {
+        Claims = user.Claims.Select(s => new
+        {
+            s.Type,
+            s.Value
+        }).ToList(),
+        user.Identity.Name,
+        user.Identity.IsAuthenticated,
+        user.Identity.AuthenticationType
+    });
+})
+.RequireAuthorization();
 
 app.Run();
