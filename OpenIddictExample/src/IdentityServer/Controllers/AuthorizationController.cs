@@ -41,7 +41,7 @@ public class AuthorizationController : Controller
                 // 'subject' claim which is required
                 new Claim(OpenIddictConstants.Claims.Subject, result.Principal.Identity.Name),
                 new Claim(OpenIddictConstants.Claims.Username, result.Principal.Identity.Name),
-                new Claim(OpenIddictConstants.Claims.Audience, "test"),
+                new Claim(OpenIddictConstants.Claims.Audience, "IdentityServerWebClients"),
             };
 
         var email = result.Principal.Claims.FirstOrDefault(q => q.Type == ClaimTypes.Email);

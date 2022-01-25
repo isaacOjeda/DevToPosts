@@ -4,7 +4,7 @@ builder.Services.AddAuthentication("Bearer")
       .AddJwtBearer("Bearer", options =>
       {
           options.Authority = "https://localhost:7001";
-          options.Audience = "test";
+          options.Audience = "IdentityServerWebClients";
       });
 
 builder.Services.AddAuthorization();
