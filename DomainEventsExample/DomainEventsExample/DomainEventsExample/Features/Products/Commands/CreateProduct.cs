@@ -10,7 +10,7 @@ public class CreateProduct : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/products", async (HttpRequest req, IMediator mediator, CreateProductCommand command) =>
+        app.MapPost("api/products", async (IMediator mediator, CreateProductCommand command) =>
         {
             return await mediator.Send(command);
         })
@@ -25,7 +25,6 @@ public class CreateProduct : ICarterModule
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public double Price { get; set; }
-        public int CategoryId { get; set; }
     }
 
     public class CreateProductHandler : IRequestHandler<CreateProductCommand, IResult>
