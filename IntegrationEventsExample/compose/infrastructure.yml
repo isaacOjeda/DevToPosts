@@ -1,0 +1,23 @@
+version: "3.5"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - balusoft
+    # network_mode: host
+    volumes: 
+      - rabbitmq:/var/lib/rabbitmq
+
+networks:
+  balusoft:
+    name: balusoft-network
+
+volumes:
+  rabbitmq:
+    driver: local
