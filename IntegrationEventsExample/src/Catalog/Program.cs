@@ -1,5 +1,7 @@
+using Catalog.Persistence;
 using MassTransit;
 using Messages;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,10 @@ builder.Services.AddMassTransit(x =>
 });
 builder.Services.AddMassTransitHostedService();
 
+builder.Services.AddDbContext<CatalogDbContext>(x =>
+{
+    x.UseInMemoryDatabase(nameof(CatalogDbContext));
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -26,9 +32,55 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/test/{message}", async (string message, IBus bus) =>
- {
-     await bus.Publish(new Message { Text = $"The time is {DateTimeOffset.Now}" });
- });
+app.MapGet("api/products", (CatalogDbContext context) =>
+{
+    return context.Products.AsNoTracking()
+        .Select(s => new GetProductsResponse(s.ProductId, s.Description, s.Price));    
+});
+
+app.MapPut("api/products", async (UpdateProductRequest request, IBus bus, CatalogDbContext context) =>
+{
+    var product = await context.Products.FindAsync(request.ProductId);
+
+    if (product is null)
+    {
+        return Results.NotFound();
+    }
+
+    var oldPrice = product.Price;
+
+    product.Description = request.Description;
+    product.Price = request.Price;
+
+    await context.SaveChangesAsync();
+
+    if (oldPrice != product.Price)
+    {
+        await bus.Publish(new ProductPriceChanged(product.ProductId, product.Price));
+    }
+
+    return Results.Ok();
+});
+
+await SeedData();
 
 app.Run();
+
+
+
+async Task SeedData()
+{
+    using var scope = app!.Services.CreateAsyncScope();
+    var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+
+    context.Products.Add(new Catalog.Entities.Product
+    {
+        Description = "Product 01",
+        Price = 999
+    });
+
+    await context.SaveChangesAsync();
+}
+
+record UpdateProductRequest(int ProductId, string Description, double Price);
+record GetProductsResponse(int ProductId, string Description, double Price);
