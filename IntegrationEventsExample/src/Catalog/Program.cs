@@ -12,7 +12,7 @@ builder.Services.AddMassTransit(x =>
         cfg.ConfigureEndpoints(context);
     });
 });
-builder.Services.AddMassTransitHostedService();
+//builder.Services.AddMassTransitHostedService();
 
 builder.Services.AddDbContext<CatalogDbContext>(x =>
 {
@@ -33,10 +33,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapGet("api/products", (CatalogDbContext context) =>
-{
-    return context.Products.AsNoTracking()
-        .Select(s => new GetProductsResponse(s.ProductId, s.Description, s.Price));    
-});
+    context.Products
+        .AsNoTracking()
+        .Select(s => new GetProductsResponse(s.ProductId, s.Description, s.Price))
+);
 
 app.MapPut("api/products", async (UpdateProductRequest request, IBus bus, CatalogDbContext context) =>
 {

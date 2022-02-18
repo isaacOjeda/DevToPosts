@@ -10,7 +10,6 @@ services:
       - 15672:15672
     networks:
       - balusoft
-    # network_mode: host
     volumes: 
       - rabbitmq:/var/lib/rabbitmq
 
