@@ -3,6 +3,7 @@ using MediatrValidationExample.Domain;
 using MediatrValidationExample.Infrastructure.Persistence;
 
 namespace MediatrValidationExample.Features.Products.Commands;
+
 public class CreateProductCommand : IRequest
 {
     public string Description { get; set; } = default!;
