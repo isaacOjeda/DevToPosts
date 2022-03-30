@@ -22,7 +22,7 @@ public class ProductsController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public Task<List<GetProductsResponse>> GetProducts() => _mediator.Send(new GetProductsQuery());
+    public Task<List<GetProductsQueryResponse>> GetProducts() => _mediator.Send(new GetProductsQuery());
 
     /// <summary>
     /// Crea un producto nuevo
@@ -36,4 +36,13 @@ public class ProductsController : ControllerBase
 
         return Ok();
     }
+
+    /// <summary>
+    /// Consulta un producto por su ID
+    /// </summary>
+    /// <param name="query"></param>
+    /// <returns></returns>
+    [HttpGet("{ProductId}")]
+    public Task<GetProductQueryResponse> GetProductById([FromRoute] GetProductQuery query) =>
+        _mediator.Send(query);
 }

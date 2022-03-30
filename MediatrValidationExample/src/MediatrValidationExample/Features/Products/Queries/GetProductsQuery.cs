@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MediatrValidationExample.Features.Products.Queries;
 
-public class GetProductsQuery : IRequest<List<GetProductsResponse>>
+public class GetProductsQuery : IRequest<List<GetProductsQueryResponse>>
 {
 
 }
 
-public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, List<GetProductsResponse>>
+public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, List<GetProductsQueryResponse>>
 {
     private readonly MyAppDbContext _context;
 
@@ -18,10 +18,10 @@ public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, List<Ge
         _context = context;
     }
 
-    public Task<List<GetProductsResponse>> Handle(GetProductsQuery request, CancellationToken cancellationToken) =>
+    public Task<List<GetProductsQueryResponse>> Handle(GetProductsQuery request, CancellationToken cancellationToken) =>
         _context.Products
             .AsNoTracking()
-            .Select(s => new GetProductsResponse
+            .Select(s => new GetProductsQueryResponse
             {
                 ProductId = s.ProductId,
                 Description = s.Description,
@@ -30,7 +30,7 @@ public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, List<Ge
             .ToListAsync();
 }
 
-public class GetProductsResponse
+public class GetProductsQueryResponse
 {
     public int ProductId { get; set; }
     public string Description { get; set; } = default!;
