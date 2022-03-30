@@ -1,11 +1,6 @@
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using MediatR;
-using MediatrValidationExample.Behaviours;
 using MediatrValidationExample.Domain;
-using MediatrValidationExample.Filters;
 using MediatrValidationExample.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,14 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers(options =>
-    options.Filters.Add<ApiExceptionFilterAttribute>())
-        .AddFluentValidation();
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-    options.SuppressModelStateInvalidFilter = true);
-builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+builder.Services.AddControllers();
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 builder.Services.AddSqlite<MyAppDbContext>(builder.Configuration.GetConnectionString("Default"));
 
 
