@@ -1,6 +1,4 @@
 ﻿using MediatR;
-using MediatrValidationExample.Domain;
-using MediatrValidationExample.Exceptions;
 using MediatrValidationExample.Infrastructure.Persistence;
 
 namespace MediatrValidationExample.Features.Products.Queries;
@@ -21,11 +19,6 @@ public class GetProductQueryHandler : IRequestHandler<GetProductQuery, GetProduc
     public async Task<GetProductQueryResponse> Handle(GetProductQuery request, CancellationToken cancellationToken)
     {
         var product = await _context.Products.FindAsync(request.ProductId);
-
-        if (product is null)
-        {
-            throw new NotFoundException(nameof(Product), request.ProductId);
-        }
 
         return new GetProductQueryResponse
         {
