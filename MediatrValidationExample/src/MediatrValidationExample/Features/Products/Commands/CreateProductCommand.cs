@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using MediatrValidationExample.Domain;
 using MediatrValidationExample.Infrastructure.Persistence;
 
@@ -34,5 +35,14 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand>
         await _context.SaveChangesAsync();
 
         return Unit.Value;
+    }
+}
+
+public class CreateProductValidator : AbstractValidator<CreateProductCommand>
+{
+    public CreateProductValidator()
+    {
+        RuleFor(r => r.Description).NotNull();
+        RuleFor(r => r.Price).NotNull().GreaterThan(0);
     }
 }
