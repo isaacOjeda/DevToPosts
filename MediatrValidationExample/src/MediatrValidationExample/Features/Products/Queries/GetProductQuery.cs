@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using MediatrValidationExample.Domain;
 using MediatrValidationExample.Exceptions;
 using MediatrValidationExample.Infrastructure.Persistence;
@@ -13,10 +14,12 @@ public class GetProductQuery : IRequest<GetProductQueryResponse>
 public class GetProductQueryHandler : IRequestHandler<GetProductQuery, GetProductQueryResponse>
 {
     private readonly MyAppDbContext _context;
+    private readonly IMapper _mapper;
 
-    public GetProductQueryHandler(MyAppDbContext context)
+    public GetProductQueryHandler(MyAppDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
     public async Task<GetProductQueryResponse> Handle(GetProductQuery request, CancellationToken cancellationToken)
     {
@@ -27,12 +30,7 @@ public class GetProductQueryHandler : IRequestHandler<GetProductQuery, GetProduc
             throw new NotFoundException(nameof(Product), request.ProductId);
         }
 
-        return new GetProductQueryResponse
-        {
-            Description = product.Description,
-            ProductId = product.ProductId,
-            Price = product.Price
-        };
+        return _mapper.Map<GetProductQueryResponse>(product);
     }
 }
 
@@ -41,4 +39,11 @@ public class GetProductQueryResponse
     public int ProductId { get; set; }
     public string Description { get; set; } = default!;
     public double Price { get; set; }
+}
+
+public class GetProductQueryProfile : Profile
+{
+    public GetProductQueryProfile() =>
+        CreateMap<Product, GetProductQueryResponse>();
+
 }

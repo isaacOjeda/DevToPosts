@@ -5,8 +5,17 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace MediatrValidationExample.Filters;
 public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
+    private readonly ILogger<ApiExceptionFilterAttribute> _logger;
+
+    public ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger)
+    {
+        _logger = logger;
+    }
+
     public override void OnException(ExceptionContext context)
     {
+        _logger.LogError(context.Exception, context.Exception.Message);
+
         switch (context.Exception)
         {
             case ValidationException validationEx:
