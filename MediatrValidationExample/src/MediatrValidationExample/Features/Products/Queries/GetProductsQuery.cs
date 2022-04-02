@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using MediatrValidationExample.Domain;
+using MediatrValidationExample.Helpers;
 using MediatrValidationExample.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +33,7 @@ public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, List<Ge
 
 public class GetProductsQueryResponse
 {
-    public int ProductId { get; set; }
+    public string ProductId { get; set; } = default!;
     public string Description { get; set; } = default!;
     public double Price { get; set; }
     public string ListDescription { get; set; } = default!;
@@ -44,6 +45,9 @@ public class GetProductsQueryProfile : Profile
         CreateMap<Product, GetProductsQueryResponse>()
             .ForMember(dest =>
                 dest.ListDescription,
-                opt => opt.MapFrom(mf => $"{mf.Description} - {mf.Price:c}"));
+                opt => opt.MapFrom(mf => $"{mf.Description} - {mf.Price:c}"))
+            .ForMember(dest =>
+                dest.ProductId,
+                opt => opt.MapFrom(mf => mf.ProductId.ToHashId()));
 
 }

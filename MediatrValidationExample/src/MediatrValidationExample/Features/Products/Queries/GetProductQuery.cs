@@ -2,13 +2,14 @@
 using MediatR;
 using MediatrValidationExample.Domain;
 using MediatrValidationExample.Exceptions;
+using MediatrValidationExample.Helpers;
 using MediatrValidationExample.Infrastructure.Persistence;
 
 namespace MediatrValidationExample.Features.Products.Queries;
 
 public class GetProductQuery : IRequest<GetProductQueryResponse>
 {
-    public int ProductId { get; set; }
+    public string ProductId { get; set; }
 }
 
 public class GetProductQueryHandler : IRequestHandler<GetProductQuery, GetProductQueryResponse>
@@ -23,7 +24,7 @@ public class GetProductQueryHandler : IRequestHandler<GetProductQuery, GetProduc
     }
     public async Task<GetProductQueryResponse> Handle(GetProductQuery request, CancellationToken cancellationToken)
     {
-        var product = await _context.Products.FindAsync(request.ProductId);
+        var product = await _context.Products.FindAsync(request.ProductId.FromHashId());
 
         if (product is null)
         {
@@ -36,7 +37,7 @@ public class GetProductQueryHandler : IRequestHandler<GetProductQuery, GetProduc
 
 public class GetProductQueryResponse
 {
-    public int ProductId { get; set; }
+    public string ProductId { get; set; } = default!;
     public string Description { get; set; } = default!;
     public double Price { get; set; }
 }
@@ -44,6 +45,9 @@ public class GetProductQueryResponse
 public class GetProductQueryProfile : Profile
 {
     public GetProductQueryProfile() =>
-        CreateMap<Product, GetProductQueryResponse>();
+        CreateMap<Product, GetProductQueryResponse>()
+            .ForMember(dest =>
+                dest.ProductId,
+                opt => opt.MapFrom(mf => mf.ProductId.ToHashId()));
 
 }
