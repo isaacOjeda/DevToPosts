@@ -1,11 +1,13 @@
 ﻿using MediatR;
 using MediatrValidationExample.Features.Products.Commands;
 using MediatrValidationExample.Features.Products.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediatrValidationExample.Controllers;
 
 
+[Authorize]
 [ApiController]
 [Route("api/products")]
 public class ProductsController : ControllerBase
@@ -30,6 +32,7 @@ public class ProductsController : ControllerBase
     /// <param name="command"></param>
     /// <returns></returns>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateProduct([FromBody] CreateProductCommand command)
     {
         await _mediator.Send(command);
