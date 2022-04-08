@@ -1,8 +1,8 @@
-﻿using MediatrValidationExample.Exceptions;
+﻿using MediatrExample.ApplicationCore.Common.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace MediatrValidationExample.Filters;
+namespace MediatrExample.WebApi.Filters;
 public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
     private readonly ILogger<ApiExceptionFilterAttribute> _logger;

@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using MediatrValidationExample.Features.Products.Commands;
-using MediatrValidationExample.Features.Products.Queries;
+using MediatrExample.ApplicationCore.Features.Products.Commands;
+using MediatrExample.ApplicationCore.Features.Products.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MediatrValidationExample.Controllers;
+namespace MediatrExample.WebApi.Controllers;
 
 
 [Authorize]

@@ -1,87 +1,16 @@
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using MediatR;
-using MediatrValidationExample.Behaviours;
-using MediatrValidationExample.Domain;
-using MediatrValidationExample.Filters;
-using MediatrValidationExample.Infrastructure.Persistence;
-using MediatrValidationExample.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using MediatrExample.ApplicationCore;
+using MediatrExample.ApplicationCore.Domain;
+using MediatrExample.ApplicationCore.Infrastructure.Persistence;
+using MediatrExample.WebApi;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "My API",
-        Version = "v1"
-    });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Please insert JWT with Bearer into field",
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-   {
-     new OpenApiSecurityScheme
-     {
-       Reference = new OpenApiReference
-       {
-         Type = ReferenceType.SecurityScheme,
-         Id = "Bearer"
-       }
-      },
-      new string[] { }
-    }
-  });
-});
-builder.Services.AddControllers(options =>
-    options.Filters.Add<ApiExceptionFilterAttribute>())
-        .AddFluentValidation();
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-    options.SuppressModelStateInvalidFilter = true);
-builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-builder.Services.AddSqlite<MyAppDbContext>(builder.Configuration.GetConnectionString("Default"));
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-
-builder.Services
-    .AddIdentityCore<IdentityUser>()
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<MyAppDbContext>();
-
-builder.Services
-    .AddHttpContextAccessor()
-    .AddAuthorization()
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-        };
-    });
-
+builder.Services.AddWebApi();
+builder.Services.AddApplicationCore();
+builder.Services.AddPersistence(builder.Configuration.GetConnectionString("Default"));
+builder.Services.AddSecurity(builder.Configuration);
 
 var app = builder.Build();
 
@@ -93,7 +22,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -102,8 +30,6 @@ app.MapControllers();
 await SeedProducts();
 
 app.Run();
-
-
 
 
 async Task SeedProducts()

@@ -1,6 +1,7 @@
-﻿using System.Security.Claims;
+﻿using MediatrExample.ApplicationCore.Common.Interfaces;
+using System.Security.Claims;
 
-namespace MediatrValidationExample.Services;
+namespace MediatrExample.WebApi.Services;
 public class CurrentUserService : ICurrentUserService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;

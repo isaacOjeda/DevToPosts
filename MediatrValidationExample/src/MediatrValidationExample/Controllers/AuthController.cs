@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using MediatrValidationExample.Features.Auth;
-using MediatrValidationExample.Services;
+using MediatrExample.ApplicationCore.Common.Interfaces;
+using MediatrExample.ApplicationCore.Features.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MediatrValidationExample.Controllers;
+namespace MediatrExample.WebApi.Controllers;
 
 
 [ApiController]
