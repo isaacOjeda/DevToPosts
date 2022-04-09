@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7F1D2106-8B3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediatrExample.WebApi", "src\MediatrValidationExample\MediatrExample.WebApi.csproj", "{05F5219D-5F6E-471E-BA10-EAEA3130F1BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediatrExample.ApplicationCore", "MediatrExample.ApplicationCore\MediatrExample.ApplicationCore.csproj", "{F9EA9774-CD48-4EAB-9A0B-1DD15E0EF580}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediatrExample.ApplicationCore", "src\MediatrExample.ApplicationCore\MediatrExample.ApplicationCore.csproj", "{F9EA9774-CD48-4EAB-9A0B-1DD15E0EF580}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
