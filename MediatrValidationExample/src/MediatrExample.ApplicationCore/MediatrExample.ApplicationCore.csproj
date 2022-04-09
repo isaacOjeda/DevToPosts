@@ -6,6 +6,8 @@
 	<Nullable>enable</Nullable>
   </PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="Audit.NET" Version="19.0.7" />
+		<PackageReference Include="Audit.NET.AzureStorageBlobs" Version="19.0.7" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
 		<PackageReference Include="Hashids.net" Version="1.5.0" />

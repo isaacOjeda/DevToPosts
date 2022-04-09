@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MediatR;
+using MediatrExample.ApplicationCore.Common.Attributes;
 using MediatrExample.ApplicationCore.Domain;
 using MediatrExample.ApplicationCore.Infrastructure.Persistence;
 
 namespace MediatrExample.ApplicationCore.Features.Products.Commands;
+
+[AuditLog]
 public class CreateProductCommand : IRequest
 {
     public string Description { get; set; } = default!;

@@ -41,6 +41,20 @@ public class ProductsController : ControllerBase
     }
 
     /// <summary>
+    /// Actualiza un producto
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns></returns>
+    [HttpPut]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductCommand command)
+    {
+        await _mediator.Send(command);
+
+        return Ok();
+    }
+
+    /// <summary>
     /// Consulta un producto por su ID
     /// </summary>
     /// <param name="query"></param>
