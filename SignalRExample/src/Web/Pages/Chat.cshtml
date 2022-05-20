@@ -1,0 +1,117 @@
+@page
+@model ChatModel
+
+@{
+    ViewData["Title"] = "Chat";
+}
+
+<div id="startPanel">
+    <strong>Create a group</strong>
+    <div class="form-group row mb-2">
+        <label class="col-form-label col-md-3">Group name</label>
+        <div class="col-md-9">
+            <input type="text" class="form-control" id="groupName" />
+        </div>
+    </div>
+    <div class="form-group row mb-2">
+        <label class="col-form-label col-md-3">User name</label>
+        <div class="col-md-9">
+            <input type="text" class="form-control" id="userName" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-9 offset-3">
+            <button type="button" class="btn btn-primary" id="newGroup">
+                Enter
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="chatPanel" style="display:none;">
+    <textarea id="messages" rows="10" class="form-control mb-1" readonly></textarea>
+    <input class="form-control mb-1" type="text" id="newMessage" />
+    <button id="send" class="btn btn-primary btn-lg btn-block">Send</button>
+    <button id="leave" class="btn btn-secondary btn-lg btn-block">LEave</button>
+</div>
+
+@section Scripts {
+<script src="lib\signalr\dist\browser\signalr.js"></script>
+<script>
+    // panels
+    var startPanel = document.getElementById("startPanel");
+    var chatPanel = document.getElementById("chatPanel");
+    // buttons
+    var btnNewGroup = document.getElementById("newGroup");
+    var btnSend = document.getElementById("send");
+    var btnLeave = document.getElementById("leave");
+    // inputs
+    var newMessage = document.getElementById("newMessage");
+    var messages = document.getElementById("messages");
+
+    var userName = "";
+    var groupName = "";
+
+    btnNewGroup.addEventListener("click", function () {
+        groupName = document.getElementById("groupName").value;
+        userName = document.getElementById("userName").value;
+
+        connection.invoke("JoinGroup", groupName, userName)
+            .catch(function (err) {
+                return console.error(err.toString());
+            });
+
+        startPanel.style.display = "none";
+        chatPanel.style.display = "block";
+    });
+
+    btnSend.addEventListener("click", function () {
+        var message = {
+            userName: userName,
+            message: newMessage.value,
+            groupName: groupName
+        }
+
+        connection.invoke("SendMessage", message)
+            .catch(function (err) {
+                return console.error(err.toString());
+            });
+
+        newMessage.value = "";
+    });
+
+    btnLeave.addEventListener("click", function () {
+        connection.invoke("LeaveGroup", groupName, userName)
+            .catch(function (err) {
+                return console.error(err.toString());
+            });
+        location.reload();
+    })
+
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl("https://localhost:7048/hubs/chat")
+        .build();
+
+    connection.on("NewUser", function (message) {
+        messages.value += message + "\n";
+        console.log(message);
+    });
+
+    connection.on("NewMessage", function (message) {
+        messages.value += message.userName + ": " + message.message + "\n";
+        console.log(message);
+    });
+
+    connection.on("LeftUser", function (message) {
+        messages.value += message + "\n";
+        console.log(message);
+    });
+
+
+    connection.start().then(function () {
+        console.log("Connection started");
+    }).catch(function (error) {
+        return console.error(error.toString());
+    });
+</script>
+}

@@ -32,5 +32,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<WeatherHub>("/hubs/weather");
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();
