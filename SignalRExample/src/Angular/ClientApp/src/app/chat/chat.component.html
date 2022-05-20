@@ -1,0 +1,32 @@
+<div *ngIf="!joined">
+  <strong>Create a group</strong>
+  <div class="form-group row mb-2">
+    <label class="col-form-label col-md-3">Group name</label>
+    <div class="col-md-9">
+      <input type="text" class="form-control" name="groupName" [(ngModel)]="groupName" />
+    </div>
+  </div>
+  <div class="form-group row mb-2">
+    <label class="col-form-label col-md-3">User name</label>
+    <div class="col-md-9">
+      <input type="text" class="form-control" name="userName" [(ngModel)]="userName" />
+    </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-md-9 offset-3">
+      <button type="button" class="btn btn-primary" (click)="join()">
+        Enter
+      </button>
+    </div>
+  </div>
+</div>
+<div *ngIf="joined">
+  <div id="chat">
+    <div *ngFor="let message of conversation">
+      <div><strong>{{message.userName}}:</strong> {{message.message}}</div>
+    </div>
+  </div>
+  <input class="form-control mb-1" type="text" [(ngModel)]="messageToSend" name="messageToSend" />
+  <button class="btn btn-primary" (click)="sendMessage()">Send</button>
+  <button class="btn btn-secondary" (click)="leave()">Leave</button>
+</div>
