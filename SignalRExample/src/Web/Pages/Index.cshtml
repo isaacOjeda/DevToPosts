@@ -1,0 +1,45 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<button class="btn btn-success" id="start">Start streaming</button>
+<button class="btn btn-danger" id="stop">Stop streaming</button>
+
+<br>
+<br>
+
+<div id="data"></div>
+
+@section Scripts {
+<script src="lib\signalr\dist\browser\signalr.js"></script>
+<script>
+
+    document.getElementById("start")
+        .addEventListener("click", function () {
+            connection.start().then(function () {
+                console.log("Connection started");
+            }).catch(function (error) {
+                return console.error(error.toString());
+            });
+        });
+
+    document.getElementById("stop")
+        .addEventListener("click", function () {
+            connection.stop();
+        });
+
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl("https://localhost:7048/hubs/weather")
+        .build();
+
+    connection.on("WeatherUpdate", function (weather) {
+        var container = document.getElementById("data");
+
+        container.innerHTML = JSON.stringify(weather);
+    });
+
+
+</script>
+}
