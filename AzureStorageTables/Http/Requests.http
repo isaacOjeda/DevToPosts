@@ -1,0 +1,20 @@
+
+
+### Create Vaccine Request
+POST  https://localhost:7066/api/vaccine-requests
+Content-Type:  application/json
+
+{
+    "fullName": "Isaac Ojeda",
+    "curp": "test00002",
+    "city": "Chihuahua",
+    "state": "Chihuahua"
+}
+
+### Get Vaccine Requests by State
+GET https://localhost:7066/api/vaccine-requests?state=Chihuahua&city=Chihuahua
+Content-Type: application/json
+
+### Get Vaccine Request by CURP
+GET https://localhost:7066/api/vaccine-requests/test00001?state=Chihuahua&city=Chihuahua
+Content-Type: application/json
