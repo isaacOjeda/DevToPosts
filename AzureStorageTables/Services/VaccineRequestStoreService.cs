@@ -38,19 +38,12 @@ public class VaccineRequestStoreService : IVaccineRequestStoreService
         return null;
     }
 
-    public async Task<List<VaccineRequest>> GetRequestsByCityAsync(string state, string city)
+    public IAsyncEnumerable<VaccineRequest> GetRequestsByCityAsync(string state, string city)
     {
         var results = _tableClient
             .QueryAsync<VaccineRequest>(q => q.PartitionKey == $"{state}_{city}");
 
-        var requests = new List<VaccineRequest>();
-
-        await foreach (var page in results.AsPages())
-        {
-            requests.AddRange(page.Values);
-        }
-
-        return requests;
+        return results;
     }
 
 }

@@ -30,11 +30,12 @@ app.MapPost("api/vaccine-requests", async (VaccineRequestDto request, IVaccineRe
     return Results.Ok();
 });
 
-app.MapGet("api/vaccine-requests", async (string state, string city, IVaccineRequestStoreService store) =>
+app.MapGet("api/vaccine-requests", (string state, string city, IVaccineRequestStoreService store) =>
 {
-    var requests = await store.GetRequestsByCityAsync(state, city);
-
-    return requests.Select(s => new VaccineRequestDto(s.Curp, s.FullName, s.City, s.State));
+    return Results.Ok(store
+        .GetRequestsByCityAsync(state, city)
+        .Select(s => new VaccineRequestDto(s.Curp, s.FullName, s.City, s.State))
+    );
 });
 
 app.MapGet("api/vaccine-requests/{curp}", async(string curp, string state, string city, IVaccineRequestStoreService store) =>
