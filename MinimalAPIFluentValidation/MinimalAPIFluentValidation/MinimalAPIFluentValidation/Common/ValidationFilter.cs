@@ -83,7 +83,7 @@ public static class ValidationFilter
 
                 if (validator is not null)
                 {
-                    yield return new ValidationDescriptor { ArgumentIndex = i, ArgumentType = parameter.ParameterType, Validator = validator };
+                    yield return new ValidationDescriptor { ArgumentIndex = i, Validator = validator };
                 }
             }
         }
@@ -93,7 +93,6 @@ public static class ValidationFilter
     private class ValidationDescriptor
     {
         public required int ArgumentIndex { get; init; }
-        public required Type ArgumentType { get; init; }
         public required IValidator Validator { get; init; }
     }
 }
