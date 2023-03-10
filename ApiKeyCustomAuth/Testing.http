@@ -1,0 +1,10 @@
+@host = http://localhost:5045
+
+
+###
+GET {{host}}
+X-API-KEY: 0e6b2066-9e98-4783-8c82-c3530aa8a197
+
+###
+GET {{host}}
+X-API-KEY: 607de3e9-2d01-430d-a6e1-d2ff8b6cfcf0

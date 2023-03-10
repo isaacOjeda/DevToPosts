@@ -21,18 +21,16 @@ public abstract class CronBackgroundJob : BackgroundService
         DateTimeOffset? nextOcurrence = _cronExpression.GetNextOccurrence(DateTimeOffset.UtcNow, _timeZone);
 
         if (nextOcurrence.HasValue)
-        {          
-            var delay = nextOcurrence.Value - DateTimeOffset.UtcNow;  
+        {
+            var delay = nextOcurrence.Value - DateTimeOffset.UtcNow;
             _timer = new PeriodicTimer(delay);
 
             if (await _timer.WaitForNextTickAsync(stoppingToken))
-            {            
+            {
                 _timer.Dispose();
                 _timer = null;
 
                 await DoWork(stoppingToken);
-
-                // Reagendamos
                 await ExecuteAsync(stoppingToken);
             }
         }
