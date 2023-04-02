@@ -1,0 +1,24 @@
+@host = http://localhost:5087
+
+
+### Tenant 01
+GET {{host}}
+Content-Type: application/json
+X-Tenant: tenant01
+
+### Tenant 01 Products
+GET {{host}}/api/products
+Content-Type: application/json
+X-Tenant: tenant01
+
+
+### Tenant 01
+GET {{host}}
+Content-Type: application/json
+X-Tenant: tenant02
+
+
+### Tenant 02 Products
+GET {{host}}/api/products
+Content-Type: application/json
+X-Tenant: tenant02
