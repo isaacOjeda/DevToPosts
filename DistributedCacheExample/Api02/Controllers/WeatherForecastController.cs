@@ -23,7 +23,6 @@ public class WeatherForecastController : ControllerBase
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
-    [ResponseCache(Duration = 30)]
     public async Task<IEnumerable<WeatherForecast>> Get()
     {
         var dataInBytes = await _distributedCache.GetAsync("GetWeatherForecast");
