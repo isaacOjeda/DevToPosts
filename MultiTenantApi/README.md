@@ -8,7 +8,7 @@ Crear aplicaciones multi-tenant se vuelven un reto cuando se comienza en el desa
 
 **Finbuckle** de verdad que facilita el trabajo y básicamente te lo hace todo, así que comenzemos.
 
-Como siempre, [aquí]([DevToPosts/MultiTenantApi at main · isaacOjeda/DevToPosts (github.com)](https://github.com/isaacOjeda/DevToPosts/tree/main/MultiTenantApi)) puedes consultar el código para que no batalles en seguir este post.
+Como siempre, [aquí](https://github.com/isaacOjeda/DevToPosts/tree/main/MultiTenantApi) puedes consultar el código para que no batalles en seguir este post.
 
 # Web API Multi-Tenant
 
