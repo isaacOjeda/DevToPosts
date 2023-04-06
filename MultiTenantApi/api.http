@@ -12,7 +12,7 @@ Content-Type: application/json
 X-Tenant: tenant01
 
 
-### Tenant 01
+### Tenant 02
 GET {{host}}
 Content-Type: application/json
 X-Tenant: tenant02

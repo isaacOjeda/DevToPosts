@@ -5,10 +5,12 @@ using MultiTenantApi.Data.Tenants;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// DB Context's
 builder.Services.AddSqlServer<TenantsDbContext>(
     builder.Configuration.GetConnectionString("Tenants"));
 builder.Services.AddDbContext<ApiDbContext>();
 
+// Multitenancy support
 builder.Services
     .AddMultiTenant<TenantInfo>()
     .WithHeaderStrategy("X-Tenant")
