@@ -2,7 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Api02.Controllers;
+namespace DistributedCacheExample.Controllers;
 
 [ApiController]
 [Route("[controller]")]

@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api01", "Api01\Api01.csproj", "{35DCA8F7-2E92-4B97-A92B-11FE6F0758E8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api02", "Api02\Api02.csproj", "{5F259887-1327-486F-9721-6098DA3FDC23}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedCacheExample", "DistributedCacheExample\DistributedCacheExample.csproj", "{5F259887-1327-486F-9721-6098DA3FDC23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,4 @@
-namespace Api01;
+namespace DistributedCacheExample;
 
 public class WeatherForecast
 {
