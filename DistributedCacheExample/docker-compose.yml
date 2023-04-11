@@ -1,6 +1,17 @@
-version: "3.5"
+version: '3.4'
 
 services:
+  distributedcacheexample:
+    image: ${DOCKER_REGISTRY-}distributedcacheexample
+    build:
+      context: .
+      dockerfile: DistributedCacheExample/Dockerfile
+    ports:
+      - 7198:443
+      - 5106:80      
+    networks:
+      - balusoft
+
   redis:
     image: redis/redis-stack:latest
     container_name: redis-stack-server
@@ -12,7 +23,6 @@ services:
       - balusoft
     volumes:
       - redis:/redis/data
-
 
 networks:
   balusoft:

@@ -14,21 +14,20 @@ public class WeatherForecastController : ControllerBase
     };
 
     private readonly ILogger<WeatherForecastController> _logger;
-    private readonly IDistributedCache _distributedCache;
+    private readonly DistributedCacheWrapper _cacheWrapper;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, IDistributedCache distributedCache)
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, DistributedCacheWrapper cacheWrapper)
     {
         _logger = logger;
-        _distributedCache = distributedCache;
+        _cacheWrapper = cacheWrapper;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
     public async Task<IEnumerable<WeatherForecast>> Get()
     {
-        var dataInBytes = await _distributedCache.GetAsync("GetWeatherForecast");
-        var data = Enumerable.Empty<WeatherForecast>();
+        var data = await _cacheWrapper.GetCachedItem<IEnumerable<WeatherForecast>>("GetWeatherForecast");
 
-        if (dataInBytes is null)
+        if (data is null)
         {
             data = Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
@@ -38,17 +37,8 @@ public class WeatherForecastController : ControllerBase
             })
             .ToArray();
 
-            var dataJson = JsonSerializer.Serialize(data);
-            dataInBytes = System.Text.Encoding.UTF8.GetBytes(dataJson);
-
-            _distributedCache.Set("GetWeatherForecast", dataInBytes, new DistributedCacheEntryOptions
-            {
-                AbsoluteExpiration = DateTimeOffset.UtcNow.AddMinutes(5)
-            });
+            await _cacheWrapper.SaveItem(data, "GetWeatherForecast", expirationInMinutes: 5);
         }
-
-        var rawJson = System.Text.Encoding.UTF8.GetString(dataInBytes);
-        data = JsonSerializer.Deserialize<IEnumerable<WeatherForecast>>(rawJson);
 
         return data;
     }
