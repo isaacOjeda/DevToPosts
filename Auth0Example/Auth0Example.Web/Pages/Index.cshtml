@@ -1,0 +1,26 @@
+﻿@page
+@using Microsoft.AspNetCore.Authentication
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+@if(User.Identity!.IsAuthenticated)
+{
+    <h2>Welcome @User.Identity.Name</h2>
+    <img class="img-thumbnail" src="@(User.FindFirst("picture")?.Value)" />
+    <ul>
+        @foreach(var claim in @User.Claims)
+        {
+            <li>@claim.Type: @claim.Value</li>
+        }
+        <li>access_token: @(await HttpContext.GetTokenAsync("access_token"))</li>
+        <li>id_token: @(await HttpContext.GetTokenAsync("id_token"))</li>
+        <li>refresh_token: @(await HttpContext.GetTokenAsync("refresh_token"))</li>
+    </ul>
+
+
+    <h2>Raw Response from API</h2>
+
+    @Model.RawApiResponse
+}
