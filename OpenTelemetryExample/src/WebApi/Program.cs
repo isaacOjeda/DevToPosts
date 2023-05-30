@@ -83,8 +83,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseSerilogRequestLogging();
 
-app.MapGet("/api/weather-forecast", async (HttpClient http) =>
+app.MapGet("/api/weather-forecast", async (HttpClient http, Instrumentor instrumentor) =>
 {
+    instrumentor.IncomingRequestCounter.Add(1,
+        new KeyValuePair<string, object?>("operation", "GetWeatherForecast"),
+        new KeyValuePair<string, object?>("minimal-api-route", "/api/weather-forecast"));
+
     var url = "https://api.open-meteo.com/v1/forecast?latitude=28.68&longitude=-106.04&hourly=temperature_2m";
 
     var response = await http.GetAsync(url);
