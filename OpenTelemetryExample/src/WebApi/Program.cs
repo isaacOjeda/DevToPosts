@@ -38,14 +38,7 @@ builder.Services.AddOpenTelemetry()
         .ConfigureResource(resource => resource
             .AddService(Instrumentor.ServiceName))
         .AddAspNetCoreInstrumentation()
-        .AddHttpClientInstrumentation(opts =>
-        {
-            opts.FilterHttpRequestMessage = req =>
-            {
-                var ignore = new[] { "/loki/api" };
-                return !ignore.Any(s => req.RequestUri!.ToString().Contains(s));
-            };
-        })
+        .AddHttpClientInstrumentation()
         .AddOtlpExporter())
     .WithMetrics(metrics => metrics
         .AddMeter(Instrumentor.ServiceName)
@@ -95,18 +88,12 @@ app.MapGet("/api/weather-forecast", async (HttpClient http, Instrumentor instrum
 
     response.EnsureSuccessStatusCode();
 
-    var rawData = await response.Content.ReadAsStringAsync();
-
-
-    var data = JsonSerializer.Deserialize<WeatherForecast>(rawData);
-
-    return data;
+    return await response.Content.ReadFromJsonAsync<WeatherForecast>();
 });
 
 app.MapGet("error-example", () =>
 {
     throw new Exception("Error example");
 });
-
 
 app.Run();

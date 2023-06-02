@@ -6,7 +6,6 @@ namespace WebApi;
 public sealed class Instrumentor : IDisposable
 {
     public const string ServiceName = "WebApi";
-
     public ActivitySource Tracer { get; }
     public Meter Recorder { get; }
     public Counter<long> IncomingRequestCounter { get; }
