@@ -2,7 +2,6 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
-using System.Text.Json;
 using WebApi;
 using WebApi.Models;
 
@@ -42,7 +41,7 @@ builder.Services.AddOpenTelemetry()
         .AddOtlpExporter())
     .WithMetrics(metrics => metrics
         .AddMeter(Instrumentor.ServiceName)
-        .AddMeter("Microsoft.AspNetCore.Hosting", "Microsoft.AspNetCore.Server.Kestrel")
+        // .AddMeter("Microsoft.AspNetCore.Hosting", "Microsoft.AspNetCore.Server.Kestrel")
         .ConfigureResource(resource => resource
             .AddService(Instrumentor.ServiceName))
         .AddRuntimeInstrumentation()

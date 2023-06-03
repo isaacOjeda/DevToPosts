@@ -30,7 +30,7 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     volumes:
       - ./tmp/grafana/:/var/lib/grafana/    
-      #- ./grafana-datasource.yaml:/etc/grafana/provisioning/datasources/ds.yaml
+      - ./grafana-datasource.yaml:/etc/grafana/provisioning/datasources/ds.yaml
     depends_on:
       - prometheus
       - loki
