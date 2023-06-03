@@ -41,7 +41,6 @@ builder.Services.AddOpenTelemetry()
         .AddOtlpExporter())
     .WithMetrics(metrics => metrics
         .AddMeter(Instrumentor.ServiceName)
-        // .AddMeter("Microsoft.AspNetCore.Hosting", "Microsoft.AspNetCore.Server.Kestrel")
         .ConfigureResource(resource => resource
             .AddService(Instrumentor.ServiceName))
         .AddRuntimeInstrumentation()
@@ -75,15 +74,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseSerilogRequestLogging();
 
-app.MapGet("/api/weather-forecast", async (HttpClient http, Instrumentor instrumentor) =>
+app.MapGet("/api/weather-forecast", async ([AsParameters] WeatherForeCastParams request) =>
 {
-    instrumentor.IncomingRequestCounter.Add(1,
+    request.Instrumentor.IncomingRequestCounter.Add(1,
         new KeyValuePair<string, object?>("operation", "GetWeatherForecast"),
         new KeyValuePair<string, object?>("minimal-api-route", "/api/weather-forecast"));
 
-    var url = "https://api.open-meteo.com/v1/forecast?latitude=28.68&longitude=-106.04&hourly=temperature_2m";
+    var url = $"https://api.open-meteo.com/v1/forecast?latitude={request.Latitude}&longitude={request.Longitude}&hourly=temperature_2m";
 
-    var response = await http.GetAsync(url);
+    var response = await request.HttpClient.GetAsync(url);
 
     response.EnsureSuccessStatusCode();
 
@@ -96,3 +95,12 @@ app.MapGet("error-example", () =>
 });
 
 app.Run();
+
+
+public struct WeatherForeCastParams
+{
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+    public HttpClient HttpClient { get; set; }
+    public Instrumentor Instrumentor { get; set; }
+}
