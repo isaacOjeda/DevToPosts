@@ -1,0 +1,22 @@
+@host = http://localhost:5178
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImlzYWFjLm9qZWRhIiwiZW1haWwiOiJpc2FhYy5vamVkYUBsb2NhbGhvc3QiLCJyb2xlIjpbIkFkbWluaXN0cmF0b3IiLCJPdGhlclJvbGUiXSwibmJmIjoxNjg4ODMzMjE3LCJleHAiOjE2ODk0MzgwMTcsImlhdCI6MTY4ODgzMzIxNywiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIn0.sOCs7F4z4EhqlQJZ7q-MIcUu_Oo_fu7InjqaNyi9ObQ
+
+### Token
+POST {{host}}/api/token
+Content-Type: application/json
+
+{
+    "userName": "isaac.ojeda",
+    "password": "admin"
+}
+
+### Token Test
+GET {{host}}/api/claims
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+
+### Products
+GET {{host}}/api/products
+Content-Type: application/json
+Authorization: Bearer {{jwt}}

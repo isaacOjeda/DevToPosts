@@ -1,0 +1,22 @@
+<h2>
+  Products
+  <small>(protected resources)</small>
+</h2>
+
+<button class="btn btn-primary" *appAuthorize="'Administrator'">Create Product</button>
+
+<!-- Tabla con productos -->
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Nombre</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let product of products">
+      <td>{{product.id}}</td>
+      <td>{{product.name}}</td>
+    </tr>
+  </tbody>
+</table>
