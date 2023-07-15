@@ -349,3 +349,4 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 OpenTelemetryExample/docker/tmp/**/*
+AngularJwtBFF/src/Angular/ClientApp/.angular/cache/**/*
