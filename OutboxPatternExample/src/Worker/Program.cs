@@ -1,9 +1,14 @@
+using ApplicationCore;
+
 using Worker;
 
 IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
+    .ConfigureServices((hostBuilder, services) =>
     {
-        services.AddHostedService<Worker>();
+        services.AddApplicationCore();
+        services.AddInfrastructure(hostBuilder.Configuration);
+
+        services.AddHostedService<OutboxProcessorWorker>();
     })
     .Build();
 

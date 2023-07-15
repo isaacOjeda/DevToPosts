@@ -12,7 +12,15 @@ public class OutboxMessage
     public DateTime CreatedAt { get; set; }
     public string EventType { get; set; }
     public string EventBody { get; set; }
-    public DateTime? SentAt { get; set; }
+    public bool Finished { get; set; }
+    public DateTime? ProcessedAt { get; set; }
     public DateTime? FailedAt { get; set; }
     public string? FailureReason { get; set; }
+    public int Retries { get; set; }
+    public OutboxMessageType Type { get; set; }
+}
+
+public enum OutboxMessageType
+{
+    PaymentCreated
 }
