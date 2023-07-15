@@ -1,0 +1,18 @@
+@host = http://localhost:5051
+
+
+### Create Payment
+POST {{host}}/api/payment
+Content-Type: application/json
+
+{
+    "tokenCard": "tok_1J4Z3n2eZvKYlo2C0X2X2X2X",
+    "amount": 1000,
+    "currency": "usd",
+    "cardHolderName": "John Doe",
+    "cardHolderEmail": "john.doe@mail.com"
+}
+
+### Get Payment
+GET {{host}}/api/payment/status/bbeb6cd3-8414-450b-8da5-f1d685c378a5
+Content-Type: application/json
