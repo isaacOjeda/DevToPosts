@@ -1,6 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication("Bearer")
       .AddJwtBearer("Bearer", options =>

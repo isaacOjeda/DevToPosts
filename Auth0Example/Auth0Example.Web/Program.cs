@@ -9,6 +9,7 @@ https://github.com/auth0-samples/auth0-aspnetcore-mvc-samples
 https://github.com/auth0-blog/call-protected-api-aspnet-core
 https://auth0.com/blog/exploring-auth0-aspnet-core-authentication-sdk/
 https://auth0.com/docs/quickstart/webapp/aspnet-core
+https://auth0.com/docs/get-started/authentication-and-authorization-flow
 */
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,7 +32,6 @@ builder.Services.AddAuth0WebAppAuthentication(options =>
     options.ClientId = builder.Configuration["Auth0:ClientId"];
     options.ClientSecret = builder.Configuration["Auth0:ClientSecret"];
     options.Scope = "openid profile email";
-
 })
 .WithAccessToken(options =>
 {
@@ -92,11 +92,9 @@ builder.Services.Configure<CookieAuthenticationOptions>(CookieAuthenticationDefa
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
