@@ -1,7 +1,6 @@
 using System.Text.Json;
 using ApplicationCore;
 using ApplicationCore.Common.Events;
-using ApplicationCore.Common.Models;
 using ApplicationCore.Entities;
 using ApplicationCore.Infrastructure.Persistence;
 
@@ -70,5 +69,11 @@ app.MapGet("/api/payment/status/{paymentId}", async (Guid paymentId, AppDbContex
 app.Run();
 
 
-
+public record PaymentRequest(
+    string TokenCard,
+    double Amount,
+    string Currency,
+    string CardHolderEmail,
+    string CardHolderName
+);
 
