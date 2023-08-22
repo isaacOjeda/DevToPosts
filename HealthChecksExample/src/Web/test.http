@@ -1,0 +1,2 @@
+﻿###
+GET http://localhost:5239/healthz
