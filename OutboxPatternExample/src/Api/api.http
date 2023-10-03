@@ -14,5 +14,5 @@ Content-Type: application/json
 }
 
 ### Get Payment
-GET {{host}}/api/payment/status/7ebe1d65-9dad-4ef3-8246-a7dabb52c1a1
+GET {{host}}/api/payment/status/43c34018-6446-420a-8c8a-0c29607d632b
 Content-Type: application/json
