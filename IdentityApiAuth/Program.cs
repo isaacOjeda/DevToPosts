@@ -5,20 +5,24 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// EF Core
 builder.Services.AddDbContext<AppDbContext>(options => options
     .UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+// Authentication & Authorization
 builder.Services
+    .AddAuthorization()
     .AddAuthentication()
     .AddBearerToken(IdentityConstants.BearerScheme);
 
-builder.Services.AddAuthorizationBuilder();
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+// Identity Core
 builder.Services
     .AddIdentityCore<User>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddApiEndpoints();
 
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -30,9 +34,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", () => Results.Redirect("/swagger"));
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapIdentityApi<User>();
 
+app.MapGet("/", () => Results.Redirect("/swagger"));
 app.MapGet("/me", (HttpContext httpContext) =>
 {
     return new

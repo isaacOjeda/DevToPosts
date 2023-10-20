@@ -1,0 +1,37 @@
+@host = http://localhost:5194
+@token = CfDJ8BO1QsNIvpdOgb3UsybzpiM3O4MOXWPmGLTnw4gKlLF6MBe9SSuJrzt18CuIspl1ra9w--qOjNoBT7qGs7eZv4jjBqalDMxMTABEyxpbj0RHsKUa9wUs7fxoKvnvJK3hbHZX8Knh181WLoM82QnMosmiZQ_Eng5ws4DPgQEO3WGGdnzC5udarTTNylUbQDm6QpAv6AssG-WpP1MXBffswxR5pxXcSKbxiGDcEvI3SMUcm6VJZBMA4gi1rttgrEhfuSEO89kQB53rxOCrmfudLM7zYmEWJXSTO048lui003HKHw6L6_EQF70LIkuF-y_zWjUO0GJExxEApg4Un_WUBYERLFMdQF_-tUGCBca4J4GwWbzuGI84DoZ0t9OkViPCmek9iXZbvcoD7z0casW8WWH2Mw25lfuQYNBsznoQZjj2m_V2lXTXLVB5I5lCr-zc754IfI3bZ5WLUyRsiRDT1Rfda-xvMZYbERs0qfpgAIFH9Y8F9buPkl0YD7iQ3z2J_ZPVxrYX6qGU9s9ChmV-hzl43K47j8f8kN3JQ64-XET9YOfvgv2EK-M-G7-Wd49U580tFWJOtzMXYVqPtIoz6W_1g6RKDeKHgo6Nyj5Lp50UhanyN0_TDaxWdw2HyLIEvfDT2lKVSDFGtuBK_g4F0lUGAuPg9Ar0IDIRp2O2oAEcP8Tp-jDNx9RTmGXQS6809xPx6bmNVBVJljSwu_R-MFo
+@refresh = CfDJ8BO1QsNIvpdOgb3UsybzpiM3ZaWWZ08oRw0tMIVTdfj0tv7ZclPXvEYRFlnBUg3yzBOxQ8Md0sIG4cKO8afasoBeqaS-pios0Jf9RP_jndEcxJSLFKVdID5fUoRCcy9xPfdC-pVHw9s4_OiPn7gjkpinUC9rDvIZFHLtjI9D_Pytx8EpI6pob8bA66mUtj_LV3hSwgzp6LFp4BW3EVlw58CXZAY6n0sr9JarOqY_i07lAZ0BeIQoBRS7IClYrApaekh5OZYii3HvnXMFFpKs4iLgtBcCZfI5GqZTJcMcHOJR8jVXkbLt_UOAK9yBxG0Jn5rEKyWCf8niEKMfvUDRXZMAnZTudKqKWbfRD7VKyfHcFTJ8J5w0w6X-rqqwM28PatrkPxMAAFzWfIB4b_7yb6UE9l0uYIONiA8ogk7DiUe1_JEapiouw1c7cBipZ44Y_XcpWrUpPnKN4xoGUCtTg0MU5F1O8lglegClR0Xl4--X8zsz-UmCOmsr5IgzBcjCrqNL-PbtmwGQJiHrMNvi60xab7avGL0gtcr-G8SocG_IgAEjqIBXE9jfxkmsY4vXLwML98tWKM-3cpYQkikMnMk8zwyjz_2c1K_C5aE2rxkK8kIxELgm2aEtMgNayPkmL1HRSG3ykwuLl29Sd7ttVg4Fx0kU7mLQb4wtZ4hbmk1dGANhdUKbUJmbllGdLk0oXw
+
+### New User
+POST {{host}}/register
+Content-Type: application/json
+
+{
+    "username": "isaac",
+    "password": "Passw0rd.1",
+    "email": "isaac.ojeda@mail.com"
+}
+
+
+### Login
+POST {{host}}/login
+Content-Type: application/json
+
+{
+    "username": "isaac",
+    "password": "Passw0rd.1"
+}
+
+### Me
+GET {{host}}/me
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### Refresh
+POST {{host}}/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refresh}}"
+}
