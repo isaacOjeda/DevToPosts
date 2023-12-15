@@ -1,21 +1,14 @@
+﻿using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace DistributedCacheExample;
 
-public class DistributedCacheWrapper
+public class DistributedCacheService(IDistributedCache distributedCache)
 {
-    private readonly IDistributedCache _distributedCache;
-
-    public DistributedCacheWrapper(IDistributedCache distributedCache)
-    {
-        _distributedCache = distributedCache;
-    }
-
     public async Task<T?> GetCachedItem<T>(string key)
         where T : class
     {
-        var dataInBytes = await _distributedCache.GetAsync(key);
+        var dataInBytes = await distributedCache.GetAsync(key);
 
         if (dataInBytes is null)
         {
@@ -32,9 +25,10 @@ public class DistributedCacheWrapper
         var dataJson = JsonSerializer.Serialize(item);
         var dataInBytes = System.Text.Encoding.UTF8.GetBytes(dataJson);
 
-        await _distributedCache.SetAsync(key, dataInBytes, new DistributedCacheEntryOptions
+        await distributedCache.SetAsync(key, dataInBytes, new DistributedCacheEntryOptions
         {
             AbsoluteExpiration = DateTimeOffset.UtcNow.AddMinutes(expirationInMinutes)
         });
     }
 }
+
