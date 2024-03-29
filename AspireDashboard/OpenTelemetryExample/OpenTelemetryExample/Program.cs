@@ -31,7 +31,7 @@ app.MapRazorComponents<App>()
 
 app.Run();
 
-static IHostApplicationBuilder ConfigureOpenTelemetry(IHostApplicationBuilder builder)
+static void ConfigureOpenTelemetry(IHostApplicationBuilder builder)
 {
     builder.Logging.AddOpenTelemetry(logging =>
     {
@@ -68,5 +68,5 @@ static IHostApplicationBuilder ConfigureOpenTelemetry(IHostApplicationBuilder bu
         builder.Services.ConfigureOpenTelemetryTracerProvider(tracing => tracing.AddOtlpExporter());
     }
 
-    return builder;
+    return;
 }
