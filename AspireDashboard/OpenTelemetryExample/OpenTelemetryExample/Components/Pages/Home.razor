@@ -46,13 +46,14 @@
 
 @code
 {
-    [SupplyParameterFromQuery] public int CurrentPage { get; set; } = 1;
+    [SupplyParameterFromQuery]
+    public int CurrentPage { get; set; } = 1;
 
     public List<Pokemon> Pokemons { get; set; } = new();
 
     public bool HasNext { get; set; }
-    public int NextPage { get; set; }
     public bool HasBack { get; set; }
+    public int NextPage { get; set; }
     public int BackPage { get; set; }
 
     protected override async Task OnInitializedAsync()

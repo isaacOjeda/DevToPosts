@@ -1,0 +1,22 @@
+# This is a generated file. Not intended for manual editing.
+version: "3.4"
+services:
+  opentelemetryexample:
+    build:
+      context: "C:\\Working\\Github\\DevToPosts\\AspireDashboard\\OpenTelemetryExample"
+      dockerfile: "OpenTelemetryExample/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/OpenTelemetryExample.dll"
+    environment:
+      ASPNETCORE_STATICWEBASSETS: "/app/bin/Debug/net8.0/OpenTelemetryExample.staticwebassets.runtime.CT.json"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "opentelemetryexample:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\isaac\\.nuget\\packages:/home/app/.nuget/packages"
+    - "C:\\Working\\Github\\DevToPosts\\AspireDashboard\\OpenTelemetryExample\\OpenTelemetryExample:/app:rw"
+    - "C:\\Working\\Github\\DevToPosts\\AspireDashboard\\OpenTelemetryExample:/src:rw"
+    working_dir: "/app"

@@ -29,6 +29,8 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+app.MapGet("api/pokemons", (int currentPage, PokemonService pokemon) => pokemon.GetPokemonAsync(20, currentPage));
+
 app.Run();
 
 static void ConfigureOpenTelemetry(IHostApplicationBuilder builder)
@@ -54,6 +56,7 @@ static void ConfigureOpenTelemetry(IHostApplicationBuilder builder)
                 tracing.SetSampler(new AlwaysOnSampler());
             }
 
+            tracing.AddAspNetCoreInstrumentation();
             tracing.AddHttpClientInstrumentation();
             tracing.AddSource(PokemonService.ActivitySourceName);
 
@@ -67,6 +70,4 @@ static void ConfigureOpenTelemetry(IHostApplicationBuilder builder)
         builder.Services.ConfigureOpenTelemetryMeterProvider(metrics => metrics.AddOtlpExporter());
         builder.Services.ConfigureOpenTelemetryTracerProvider(tracing => tracing.AddOtlpExporter());
     }
-
-    return;
 }
