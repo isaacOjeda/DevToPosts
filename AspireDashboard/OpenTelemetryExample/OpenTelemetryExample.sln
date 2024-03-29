@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetryExample", "OpenTelemetryExample\OpenTelemetryExample.csproj", "{21722F13-C3E2-4850-8E1A-44D61DF3F667}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTelemetryExample", "OpenTelemetryExample\OpenTelemetryExample.csproj", "{21722F13-C3E2-4850-8E1A-44D61DF3F667}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1D88F82E-6F20-44D7-8455-E217C08D4326}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{21722F13-C3E2-4850-8E1A-44D61DF3F667}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21722F13-C3E2-4850-8E1A-44D61DF3F667}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21722F13-C3E2-4850-8E1A-44D61DF3F667}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D88F82E-6F20-44D7-8455-E217C08D4326}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D88F82E-6F20-44D7-8455-E217C08D4326}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D88F82E-6F20-44D7-8455-E217C08D4326}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D88F82E-6F20-44D7-8455-E217C08D4326}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
