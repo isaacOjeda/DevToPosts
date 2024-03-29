@@ -1,0 +1,69 @@
+﻿@page "/"
+
+@inject PokemonService PokemonService
+
+
+<PageTitle>Pokemon List</PageTitle>
+
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Id</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var pokemon in Pokemons)
+    {
+        <tr>
+            <td>@pokemon.Name</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @if (HasBack)
+        {
+            <li class="page-item">
+                <a class="page-link" href="/?CurrentPage=@BackPage">
+                    Previous
+                </a>
+            </li>
+        }
+        @if (HasNext)
+        {
+            <li class="page-item">
+                <a class="page-link" href="/?CurrentPage=@NextPage">
+                    Next
+                </a>
+            </li>
+        }
+    </ul>
+</nav>
+
+
+@code
+{
+    [SupplyParameterFromQuery] public int CurrentPage { get; set; } = 1;
+
+    public List<Pokemon> Pokemons { get; set; } = new();
+
+    public bool HasNext { get; set; }
+    public int NextPage { get; set; }
+    public bool HasBack { get; set; }
+    public int BackPage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var pokemonResults = await PokemonService.GetPokemonAsync(10, CurrentPage);
+
+        HasNext = !string.IsNullOrEmpty(pokemonResults.Next);
+        NextPage = CurrentPage + 1;
+        HasBack = !string.IsNullOrEmpty(pokemonResults.Previous);
+        BackPage = CurrentPage - 1;
+
+        Pokemons = pokemonResults.Results;
+    }
+}
