@@ -1,12 +1,9 @@
-
 using Cronos;
 
 namespace BackgroundJob.Cron.Jobs;
 
-
 public abstract class CronBackgroundJob : BackgroundService
 {
-    private PeriodicTimer? _timer;
     private readonly CronExpression _cronExpression;
     private readonly TimeZoneInfo _timeZone;
 
@@ -18,20 +15,34 @@ public abstract class CronBackgroundJob : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        DateTimeOffset? nextOcurrence = _cronExpression.GetNextOccurrence(DateTimeOffset.UtcNow, _timeZone);
-
-        if (nextOcurrence.HasValue)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            var delay = nextOcurrence.Value - DateTimeOffset.UtcNow;
-            _timer = new PeriodicTimer(delay);
+            DateTimeOffset? nextOccurrence = _cronExpression.GetNextOccurrence(DateTimeOffset.UtcNow, _timeZone);
+            
+            if (!nextOccurrence.HasValue)
+                return;
 
-            if (await _timer.WaitForNextTickAsync(stoppingToken))
+            var delay = nextOccurrence.Value - DateTimeOffset.UtcNow;
+            if (delay.TotalMilliseconds > 0)
             {
-                _timer.Dispose();
-                _timer = null;
+                try
+                {
+                    await Task.Delay(delay, stoppingToken);
+                }
+                catch (TaskCanceledException)
+                {
+                    // Handle cancellation if needed
+                    return;
+                }
+            }
 
+            try
+            {
                 await DoWork(stoppingToken);
-                await ExecuteAsync(stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                // Handle or log the exception as needed
             }
         }
     }
