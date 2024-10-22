@@ -1,0 +1,12 @@
+@host = http://localhost:5008
+
+
+### Send a Notification
+POST {{host}}/send
+Content-Type: application/json
+
+{
+    "subject": "Test Notification",
+    "message": "This is a test notification",
+    "destination": "mail@host.com"
+}
