@@ -1,0 +1,36 @@
+@host = https://localhost:7156
+
+### Get all Products
+GET {{host}}/products
+Content-Type: application/json
+
+### Get Product by Id
+GET {{host}}/products/15
+Content-Type: application/json
+
+### Create Product
+POST {{host}}/products
+Content-Type: application/json
+
+{
+  "name": "Product 1",
+  "description": "Product 1 Description",
+  "price": 100,
+  "categoryId": 30
+}
+
+### Update Product
+PUT {{host}}/products/15
+Content-Type: application/json
+
+{
+  "id": 15,
+  "name": "Product 1 Updated",
+  "description": "Product 1 Description Updated",
+  "price": 200,
+  "categoryId": 30
+}
+
+### Delete Product
+DELETE {{host}}/products/15
+Content-Type: application/json
