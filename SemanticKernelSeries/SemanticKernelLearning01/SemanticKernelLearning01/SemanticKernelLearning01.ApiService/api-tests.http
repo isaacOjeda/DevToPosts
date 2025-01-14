@@ -1,0 +1,21 @@
+@host = https://localhost:7384
+
+
+
+
+### Text Generation
+POST {{host}}/api/summarizer
+Content-Type: application/json
+
+{
+    "text": "Mariana found an ancient book in her grandfather’s library, with a bookmark pointing to a page that read, “Recite these words and your destiny will change.” Intrigued, she read it out loud, and in an instant, she found herself in a bustling market in a medieval town. \rNo one seemed surprised by her modern clothing; in fact, one merchant greeted her as if he knew her. As she searched for answers, an old man explained that she was the heir to a lost legacy and had to make a choice: stay and lead a kingdom on the brink of chaos, or return to her everyday life. \rWith the book in her hands, Mariana took a deep breath and closed her eyes, choosing the challenge she had secretly always wanted."
+}
+
+
+### Text Generation v2
+POST {{host}}/api/v2/summarizer
+Content-Type: application/json
+
+{
+    "text": "Mariana found an ancient book in her grandfather’s library, with a bookmark pointing to a page that read, “Recite these words and your destiny will change.” Intrigued, she read it out loud, and in an instant, she found herself in a bustling market in a medieval town. \rNo one seemed surprised by her modern clothing; in fact, one merchant greeted her as if he knew her. As she searched for answers, an old man explained that she was the heir to a lost legacy and had to make a choice: stay and lead a kingdom on the brink of chaos, or return to her everyday life. \rWith the book in her hands, Mariana took a deep breath and closed her eyes, choosing the challenge she had secretly always wanted."
+}

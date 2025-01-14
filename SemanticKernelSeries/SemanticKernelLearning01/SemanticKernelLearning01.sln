@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernelLearning01.AppHost", "SemanticKernelLearning01\SemanticKernelLearning01.AppHost\SemanticKernelLearning01.AppHost.csproj", "{FCD0FB51-BD2C-48D5-A8A0-48FC31CF786D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernelLearning01.ServiceDefaults", "SemanticKernelLearning01\SemanticKernelLearning01.ServiceDefaults\SemanticKernelLearning01.ServiceDefaults.csproj", "{15AF0399-B9B0-4ED3-9A6F-3D65509E6328}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernelLearning01.ApiService", "SemanticKernelLearning01\SemanticKernelLearning01.ApiService\SemanticKernelLearning01.ApiService.csproj", "{B81032AE-CA94-48B6-AD26-B068FC692287}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FCD0FB51-BD2C-48D5-A8A0-48FC31CF786D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCD0FB51-BD2C-48D5-A8A0-48FC31CF786D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCD0FB51-BD2C-48D5-A8A0-48FC31CF786D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCD0FB51-BD2C-48D5-A8A0-48FC31CF786D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15AF0399-B9B0-4ED3-9A6F-3D65509E6328}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15AF0399-B9B0-4ED3-9A6F-3D65509E6328}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15AF0399-B9B0-4ED3-9A6F-3D65509E6328}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15AF0399-B9B0-4ED3-9A6F-3D65509E6328}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B81032AE-CA94-48B6-AD26-B068FC692287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B81032AE-CA94-48B6-AD26-B068FC692287}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B81032AE-CA94-48B6-AD26-B068FC692287}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B81032AE-CA94-48B6-AD26-B068FC692287}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
