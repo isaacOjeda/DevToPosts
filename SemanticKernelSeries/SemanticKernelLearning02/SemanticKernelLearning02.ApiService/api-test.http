@@ -1,0 +1,10 @@
+@host=https://localhost:7420
+
+
+### Chat Prompt
+POST {{host}}/api/chat
+Content-Type: application/json
+
+{
+  "question": "What time is it? and how is the weather today in Chihuahua? and in Santander, Spain"
+}
