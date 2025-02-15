@@ -27,9 +27,12 @@ public static class CreateBlogPost
         public async Task<Response> Handle(Request request, CancellationToken ct)
         {
             var blogposts = _vectorStore.GetCollection<Guid, BlogPost>(BlogPost.VectorName);
+
             await blogposts.CreateCollectionIfNotExistsAsync(ct);
+
             var embeddingContents =
                 await _embeddingService.GenerateEmbeddingAsync(request.Description, cancellationToken: ct);
+
             var newBlogPost = new BlogPost
             {
                 BlogPostId = Guid.NewGuid(),
@@ -38,7 +41,9 @@ public static class CreateBlogPost
                 DescriptionEmbedding = embeddingContents,
                 Tags = request.Tags
             };
+
             await blogposts.UpsertAsync(newBlogPost, cancellationToken: ct);
+
             return new Response(newBlogPost.BlogPostId);
         }
     }

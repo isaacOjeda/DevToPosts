@@ -4,7 +4,6 @@ using Microsoft.Extensions.VectorData;
 using SemanticKernelLearning03.ApiService.Endpoints;
 using Microsoft.SemanticKernel.Data;
 using Microsoft.SemanticKernel.Embeddings;
-using OpenAI.VectorStores;
 using SemanticKernelLearning03.ApiService.Models;
 
 namespace SemanticKernelLearning03.ApiService;
@@ -17,11 +16,11 @@ public static class DependencyConfig
     public static void AddSemanticKernel(this WebApplicationBuilder builder)
     {
         var (endpoint, completionModel) =
-            GetModelDetailsFromConnectionString(builder.Configuration.GetConnectionString("llama"));
+            GetModelDetailsFromConnectionString(builder.Configuration.GetConnectionString("llama")!);
         var (_, embeddingModel) =
-            GetModelDetailsFromConnectionString(builder.Configuration.GetConnectionString("embed-text"));
+            GetModelDetailsFromConnectionString(builder.Configuration.GetConnectionString("embed-text")!);
         var (host, port, apiKey) =
-            GetQdrantDetailsFromConnectionString(builder.Configuration.GetConnectionString("qdrant"));
+            GetQdrantDetailsFromConnectionString(builder.Configuration.GetConnectionString("qdrant")!);
 
         builder.Services.AddKernel()
             .AddOllamaChatCompletion(completionModel, endpoint)

@@ -53,13 +53,13 @@ Content-Type: application/json
 
   
 
-###
+### Busquedas Semanticas
 @Query=arquitectura de software
 GET {{SemanticKernelLearning03.ApiService_HostAddress}}/api/blog-posts?Query={{Query}}
 
 
 
 ###
-@Question=cuál es el objetivo principal de clean architecture?
+@Question=en lista los puntos más importantes al querer optimizar consultas SQL
 GET {{SemanticKernelLearning03.ApiService_HostAddress}}/api/blog-posts/qa?Query={{Question}}
 
