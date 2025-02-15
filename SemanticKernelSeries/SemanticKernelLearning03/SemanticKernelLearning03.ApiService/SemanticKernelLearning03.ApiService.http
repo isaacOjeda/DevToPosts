@@ -1,0 +1,65 @@
+﻿@SemanticKernelLearning03.ApiService_HostAddress = https://localhost:7391
+
+POST {{SemanticKernelLearning03.ApiService_HostAddress}}/api/blog-posts
+Content-Type: application/json
+
+{
+  "Title": "Introducción a ASP.NET Core",
+  "Description": "Una guía completa sobre cómo comenzar con ASP.NET Core y sus características principales.",
+  "Tags": ["ASP.NET Core", "C#", "Web Development"]
+}
+
+###
+POST {{SemanticKernelLearning03.ApiService_HostAddress}}/api/blog-posts
+Content-Type: application/json
+
+{
+  "Title": "Guía Completa de ASP.NET Core",
+  "Description": "ASP.NET Core es un framework moderno, de alto rendimiento y de código abierto para la creación de aplicaciones web. En esta guía, exploraremos desde los fundamentos hasta características avanzadas, incluyendo middleware, autenticación, autorización, inyección de dependencias, y la construcción de APIs RESTful. También veremos ejemplos prácticos sobre cómo integrar Entity Framework Core, implementar patrones de diseño como Repository y Unit of Work, y desplegar aplicaciones en entornos de producción con Docker y Azure.",
+  "Tags": ["ASP.NET Core", "C#", "Entity Framework", "API", "Docker", "Azure"]
+}
+
+
+###
+POST {{SemanticKernelLearning03.ApiService_HostAddress}}/api/blog-posts
+Content-Type: application/json
+
+{
+  "Title": "Principios SOLID en el Desarrollo de Software",
+  "Description": "Los principios SOLID son un conjunto de cinco principios de diseño que ayudan a los desarrolladores a crear software más mantenible, escalable y flexible. En este artículo, exploraremos cada uno de estos principios en profundidad: el Principio de Responsabilidad Única (SRP), el Principio Abierto/Cerrado (OCP), el Principio de Sustitución de Liskov (LSP), el Principio de Segregación de Interfaces (ISP) y el Principio de Inversión de Dependencias (DIP). Además, veremos ejemplos prácticos en C# para ilustrar cómo aplicarlos en el desarrollo de aplicaciones modernas, evitando código monolítico y promoviendo una arquitectura más modular y limpia.",
+  "Tags": ["SOLID", "C#", "Clean Code", "Arquitectura de Software", "Principios de Diseño"]
+}
+  
+
+###
+POST {{SemanticKernelLearning03.ApiService_HostAddress}}/api/blog-posts
+Content-Type: application/json
+
+{
+  "Title": "Optimización de Consultas SQL en Aplicaciones .NET",
+  "Description": "La optimización de consultas SQL es un aspecto fundamental en el desarrollo de aplicaciones .NET que interactúan con bases de datos. En este artículo, exploraremos diversas estrategias para mejorar el rendimiento de las consultas, incluyendo el uso de índices, la normalización y desnormalización de datos, la ejecución de consultas parametrizadas y la optimización de planes de ejecución. También veremos cómo utilizar herramientas como SQL Server Profiler y Execution Plan para analizar el rendimiento de las consultas. Finalmente, mostraremos cómo aplicar técnicas avanzadas como el uso de índices de texto completo, particionamiento de tablas y almacenamiento en caché para mejorar el tiempo de respuesta de nuestras aplicaciones.",
+  "Tags": ["SQL", "C#", "Optimización", "Entity Framework", "Bases de Datos", "Rendimiento"]
+}
+
+###
+POST {{SemanticKernelLearning03.ApiService_HostAddress}}/api/blog-posts
+Content-Type: application/json
+
+{
+  "Title": "Clean Architecture: Diseño de Software Modular y Escalable",
+  "Description": "Clean Architecture es un enfoque de diseño de software que promueve la separación de preocupaciones y la modularidad, permitiendo que las aplicaciones sean más mantenibles y escalables a lo largo del tiempo. En este artículo, exploraremos los principios fundamentales de Clean Architecture, su estructura en capas (Entidad, Use Cases, Interface Adapters e Infrastructure) y cómo aplicarlo en proyectos .NET. También veremos cómo combinarlo con patrones como CQRS, Dependency Injection y Domain-Driven Design (DDD) para maximizar la flexibilidad y testabilidad del código. Finalmente, analizaremos ejemplos prácticos con ASP.NET Core y Entity Framework para ilustrar cómo implementar una arquitectura limpia en aplicaciones reales.",
+  "Tags": ["Clean Architecture", "C#", "ASP.NET Core", "CQRS", "DDD", "Arquitectura de Software"]
+}
+
+  
+
+###
+@Query=arquitectura de software
+GET {{SemanticKernelLearning03.ApiService_HostAddress}}/api/blog-posts?Query={{Query}}
+
+
+
+###
+@Question=cuál es el objetivo principal de clean architecture?
+GET {{SemanticKernelLearning03.ApiService_HostAddress}}/api/blog-posts/qa?Query={{Question}}
+
