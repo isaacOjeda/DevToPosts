@@ -12,26 +12,39 @@ public static class SearchBlogPost
 {
     public record Request(string Query);
 
-    public record Response(Guid BlogPostId, string Title, string Description);
+    public record Response(Guid BlogPostId, string Title, string Description, double Relevance);
 
-    public class Handler([FromKeyedServices(BlogPost.VectorName)] ITextSearch textSearch)
+    public class Handler(
+        IVectorStore vectorStore,
+        ITextEmbeddingGenerationService embeddingGenerator)
     {
         public async Task<List<Response>> Handle(Request request, CancellationToken ct)
         {
-            KernelSearchResults<TextSearchResult> textResults =
-                await textSearch.GetTextSearchResultsAsync(request.Query, new()
-                {
-                    Top = 2,
-                    Skip = 0,
-                }, ct);
+            // Generate embeddings for the query
+            ReadOnlyMemory<float> queryEmbedding = await embeddingGenerator.GenerateEmbeddingAsync(request.Query, cancellationToken: ct);
+
+            var blogposts = vectorStore.GetCollection<Guid, BlogPost>(BlogPost.VectorName);
+
+            // Search with vector store directly
+            var searchResults = await blogposts.VectorizedSearchAsync(queryEmbedding, new VectorSearchOptions
+            {
+                Top = 5,
+
+            });
 
             List<Response> responses = new();
-            await foreach (TextSearchResult result in textResults.Results.WithCancellation(ct))
+            await foreach (var result in searchResults.Results)
             {
-                responses.Add(new(
-                    Guid.Parse(result.Link),
-                    result.Name,
-                    result.Value));
+                if (result.Score < 0.5)
+                {
+                    continue;
+                }
+
+                responses.Add(new Response(
+                    result.Record.BlogPostId,
+                    result.Record.Title,
+                    result.Record.Description,
+                    result.Score ?? 0));
             }
 
             return responses;

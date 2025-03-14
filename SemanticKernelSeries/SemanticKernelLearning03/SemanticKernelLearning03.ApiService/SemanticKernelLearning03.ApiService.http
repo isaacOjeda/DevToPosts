@@ -60,6 +60,6 @@ GET {{SemanticKernelLearning03.ApiService_HostAddress}}/api/blog-posts?Query={{Q
 
 
 ###
-@Question=en lista los puntos más importantes al querer optimizar consultas SQL
+@Question=Qué es clean architecture?
 GET {{SemanticKernelLearning03.ApiService_HostAddress}}/api/blog-posts/qa?Query={{Question}}
 
