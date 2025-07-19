@@ -353,3 +353,6 @@ AngularJwtBFF/src/Angular/ClientApp/.angular/cache/**/*
 /SemanticKernelSeries/SemanticKernelLearning04/conversations.db
 /SemanticKernelSeries/SemanticKernelLearning04/conversations.db-shm
 /SemanticKernelSeries/SemanticKernelLearning04/conversations.db-wal
+/SemanticKernelSeries/SemanticKernelLearning04/semantic-invoices.db
+/SemanticKernelSeries/SemanticKernelLearning04/semantic-invoices.db-shm
+/SemanticKernelSeries/SemanticKernelLearning04/semantic-invoices.db-wal

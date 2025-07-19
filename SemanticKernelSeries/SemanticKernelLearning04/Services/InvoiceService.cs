@@ -4,25 +4,18 @@ using SemanticKernelLearning04.Models;
 
 namespace SemanticKernelLearning04.Services;
 
-public class InvoiceService
+public class InvoiceService(SkInvoiceDbContext context)
 {
-    private readonly ConversationDbContext _context;
-
-    public InvoiceService(ConversationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<Invoice?> GetInvoiceByNumberAsync(string invoiceNumber)
     {
-        return await _context.Invoices
+        return await context.Invoices
             .Include(i => i.Customer)
             .FirstOrDefaultAsync(i => i.InvoiceNumber == invoiceNumber);
     }
 
     public async Task<List<Invoice>> GetUnpaidInvoicesAsync()
     {
-        return await _context.Invoices
+        return await context.Invoices
             .Include(i => i.Customer)
             .Where(i => i.Status != InvoiceStatus.Paid && i.Status != InvoiceStatus.Cancelled)
             .OrderBy(i => i.DueDate)
@@ -31,10 +24,10 @@ public class InvoiceService
 
     public async Task<List<Invoice>> GetOverdueInvoicesAsync()
     {
-        return await _context.Invoices
+        return await context.Invoices
             .Include(i => i.Customer)
-            .Where(i => i.Status != InvoiceStatus.Paid && 
-                       i.Status != InvoiceStatus.Cancelled && 
+            .Where(i => i.Status != InvoiceStatus.Paid &&
+                       i.Status != InvoiceStatus.Cancelled &&
                        i.DueDate < DateTime.UtcNow)
             .OrderBy(i => i.DueDate)
             .ToListAsync();
@@ -42,7 +35,7 @@ public class InvoiceService
 
     public async Task<List<Invoice>> GetInvoicesByCustomerAsync(int customerId)
     {
-        return await _context.Invoices
+        return await context.Invoices
             .Include(i => i.Customer)
             .Where(i => i.CustomerId == customerId)
             .OrderByDescending(i => i.CreatedAt)
@@ -51,14 +44,14 @@ public class InvoiceService
 
     public async Task<Invoice> CreateInvoiceAsync(int customerId, string description, decimal amount, DateTime dueDate, string? notes = null)
     {
-        var customer = await _context.Customers.FindAsync(customerId);
+        var customer = await context.Customers.FindAsync(customerId);
         if (customer == null)
         {
             throw new ArgumentException($"Customer with ID {customerId} not found.");
         }
 
         // Generate invoice number
-        var invoiceCount = await _context.Invoices.CountAsync() + 1;
+        var invoiceCount = await context.Invoices.CountAsync() + 1;
         var invoiceNumber = $"INV-{DateTime.UtcNow:yyyyMM}-{invoiceCount:D4}";
 
         var invoice = new Invoice
@@ -72,15 +65,15 @@ public class InvoiceService
             Status = InvoiceStatus.Draft
         };
 
-        _context.Invoices.Add(invoice);
-        await _context.SaveChangesAsync();
+        context.Invoices.Add(invoice);
+        await context.SaveChangesAsync();
 
         return await GetInvoiceByNumberAsync(invoiceNumber) ?? invoice;
     }
 
     public async Task<bool> MarkInvoiceAsPaidAsync(string invoiceNumber)
     {
-        var invoice = await _context.Invoices.FirstOrDefaultAsync(i => i.InvoiceNumber == invoiceNumber);
+        var invoice = await context.Invoices.FirstOrDefaultAsync(i => i.InvoiceNumber == invoiceNumber);
         if (invoice == null)
         {
             return false;
@@ -90,7 +83,7 @@ public class InvoiceService
         invoice.PaidDate = DateTime.UtcNow;
         invoice.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
         return true;
     }
 
@@ -104,21 +97,21 @@ public class InvoiceService
             Address = address
         };
 
-        _context.Customers.Add(customer);
-        await _context.SaveChangesAsync();
+        context.Customers.Add(customer);
+        await context.SaveChangesAsync();
 
         return customer;
     }
 
     public async Task<Customer?> GetCustomerByEmailAsync(string email)
     {
-        return await _context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+        return await context.Customers.FirstOrDefaultAsync(c => c.Email == email);
     }
 
     public async Task SeedSampleDataAsync()
     {
         // Only seed if no customers exist
-        if (await _context.Customers.AnyAsync())
+        if (await context.Customers.AnyAsync())
         {
             return;
         }
@@ -132,8 +125,8 @@ public class InvoiceService
             new Customer { Name = "Ana Rodríguez", Email = "ana.rodriguez@email.com", Phone = "555-0004", Address = "Calle Nueva 321" }
         };
 
-        _context.Customers.AddRange(customers);
-        await _context.SaveChangesAsync();
+        context.Customers.AddRange(customers);
+        await context.SaveChangesAsync();
 
         // Create sample invoices
         var invoices = new[]
@@ -196,7 +189,7 @@ public class InvoiceService
             }
         };
 
-        _context.Invoices.AddRange(invoices);
-        await _context.SaveChangesAsync();
+        context.Invoices.AddRange(invoices);
+        await context.SaveChangesAsync();
     }
 }

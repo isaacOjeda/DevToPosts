@@ -8,7 +8,8 @@ public static class ApplicationExtensions
     public static async Task<WebApplication> InitializeDatabaseAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ConversationDbContext>();
+
+        var context = scope.ServiceProvider.GetRequiredService<SkInvoiceDbContext>();
         var invoiceService = scope.ServiceProvider.GetRequiredService<InvoiceService>();
 
         await context.Database.EnsureCreatedAsync();

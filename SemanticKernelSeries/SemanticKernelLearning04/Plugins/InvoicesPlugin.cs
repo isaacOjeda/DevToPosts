@@ -6,23 +6,16 @@ using System.Text;
 
 namespace SemanticKernelLearning04.Plugins;
 
-public class InvoicesPlugin
+public class InvoicesPlugin(InvoiceService invoiceService)
 {
-    private readonly InvoiceService _invoiceService;
-
-    public InvoicesPlugin(InvoiceService invoiceService)
-    {
-        _invoiceService = invoiceService;
-    }
-
     [KernelFunction]
     [Description("Verifica el estado de pago de una factura específica usando su número de factura.")]
     public async Task<string> VerifyPaymentAsync([Description("Número de la factura a verificar (ej: INV-202412-0001)")] string numeroFactura)
     {
         try
         {
-            var invoice = await _invoiceService.GetInvoiceByNumberAsync(numeroFactura);
-            
+            var invoice = await invoiceService.GetInvoiceByNumberAsync(numeroFactura);
+
             if (invoice == null)
             {
                 return $"❌ No se encontró ninguna factura con el número: {numeroFactura}";
@@ -30,7 +23,7 @@ public class InvoicesPlugin
 
             var statusText = GetStatusText(invoice.Status);
             var result = new StringBuilder();
-            
+
             result.AppendLine($"📋 **Factura: {invoice.InvoiceNumber}**");
             result.AppendLine($"👤 Cliente: {invoice.Customer.Name}");
             result.AppendLine($"📄 Descripción: {invoice.Description}");
@@ -71,18 +64,18 @@ public class InvoicesPlugin
     {
         try
         {
-            var customer = await _invoiceService.GetCustomerByEmailAsync(clienteEmail);
-            
+            var customer = await invoiceService.GetCustomerByEmailAsync(clienteEmail);
+
             if (customer == null)
             {
                 return $"❌ No se encontró ningún cliente con el email: {clienteEmail}";
             }
 
             var dueDate = DateTime.UtcNow.AddDays(diasVencimiento);
-            var invoice = await _invoiceService.CreateInvoiceAsync(
-                customer.Id, 
-                descripcion, 
-                monto, 
+            var invoice = await invoiceService.CreateInvoiceAsync(
+                customer.Id,
+                descripcion,
+                monto,
                 dueDate,
                 "Factura generada automáticamente");
 
@@ -109,8 +102,8 @@ public class InvoicesPlugin
     {
         try
         {
-            var unpaidInvoices = await _invoiceService.GetUnpaidInvoicesAsync();
-            
+            var unpaidInvoices = await invoiceService.GetUnpaidInvoicesAsync();
+
             if (!unpaidInvoices.Any())
             {
                 return "✅ ¡Excelente! No hay facturas pendientes de pago.";
@@ -127,7 +120,7 @@ public class InvoicesPlugin
             {
                 var statusIcon = invoice.IsOverdue ? "🔴" : "🟡";
                 var statusText = invoice.IsOverdue ? $"VENCIDA ({invoice.DaysOverdue} días)" : GetStatusText(invoice.Status);
-                
+
                 result.AppendLine($"{statusIcon} **{invoice.InvoiceNumber}**");
                 result.AppendLine($"   👤 {invoice.Customer.Name}");
                 result.AppendLine($"   📄 {invoice.Description}");
@@ -160,8 +153,8 @@ public class InvoicesPlugin
     {
         try
         {
-            var invoice = await _invoiceService.GetInvoiceByNumberAsync(numeroFactura);
-            
+            var invoice = await invoiceService.GetInvoiceByNumberAsync(numeroFactura);
+
             if (invoice == null)
             {
                 return $"❌ No se encontró ninguna factura con el número: {numeroFactura}";
@@ -172,8 +165,8 @@ public class InvoicesPlugin
                 return $"ℹ️ La factura {numeroFactura} ya estaba marcada como pagada desde el {invoice.PaidDate:dd/MM/yyyy}.";
             }
 
-            var success = await _invoiceService.MarkInvoiceAsPaidAsync(numeroFactura);
-            
+            var success = await invoiceService.MarkInvoiceAsPaidAsync(numeroFactura);
+
             if (success)
             {
                 return $"✅ Factura {numeroFactura} marcada como PAGADA exitosamente.\n" +
@@ -198,15 +191,15 @@ public class InvoicesPlugin
     {
         try
         {
-            var customer = await _invoiceService.GetCustomerByEmailAsync(email);
-            
+            var customer = await invoiceService.GetCustomerByEmailAsync(email);
+
             if (customer == null)
             {
                 return $"❌ No se encontró ningún cliente con el email: {email}";
             }
 
-            var invoices = await _invoiceService.GetInvoicesByCustomerAsync(customer.Id);
-            
+            var invoices = await invoiceService.GetInvoicesByCustomerAsync(customer.Id);
+
             var result = new StringBuilder();
             result.AppendLine($"👤 **Información del Cliente**");
             result.AppendLine($"📛 Nombre: {customer.Name}");
@@ -223,7 +216,7 @@ public class InvoicesPlugin
             }
 
             result.AppendLine($"📊 **Facturas ({invoices.Count})**");
-            
+
             var totalAmount = invoices.Sum(i => i.Amount);
             var paidAmount = invoices.Where(i => i.Status == InvoiceStatus.Paid).Sum(i => i.Amount);
             var pendingAmount = totalAmount - paidAmount;

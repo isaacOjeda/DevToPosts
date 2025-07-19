@@ -3,16 +3,12 @@ using SemanticKernelLearning04.Models;
 
 namespace SemanticKernelLearning04.Data;
 
-public class ConversationDbContext : DbContext
+public class SkInvoiceDbContext(DbContextOptions<SkInvoiceDbContext> options) : DbContext(options)
 {
-    public ConversationDbContext(DbContextOptions<ConversationDbContext> options) : base(options)
-    {
-    }
-
     // Conversation entities
     public DbSet<Conversation> Conversations { get; set; }
     public DbSet<ConversationMessage> ConversationMessages { get; set; }
-    
+
     // Invoice entities
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Invoice> Invoices { get; set; }

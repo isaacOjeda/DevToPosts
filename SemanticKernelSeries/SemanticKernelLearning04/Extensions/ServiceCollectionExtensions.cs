@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<ConversationDbContext>(options =>
+        services.AddDbContext<SkInvoiceDbContext>(options =>
             options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
         
         return services;

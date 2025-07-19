@@ -2,14 +2,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace SemanticKernelLearning04.Pages;
 
-public class ChatModel : PageModel
+public class ChatModel(ILogger<ChatModel> logger) : PageModel
 {
-    private readonly ILogger<ChatModel> _logger;
-
-    public ChatModel(ILogger<ChatModel> logger)
-    {
-        _logger = logger;
-    }
+    private readonly ILogger<ChatModel> _logger = logger;
 
     public void OnGet()
     {
