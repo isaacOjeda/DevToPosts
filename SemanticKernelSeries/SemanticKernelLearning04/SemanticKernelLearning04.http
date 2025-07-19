@@ -1,0 +1,90 @@
+@SemanticKernelLearning04_HostAddress = http://localhost:5176
+@conversationId = b6867646-c887-4fa6-bfa3-1b25c01a8b07
+
+
+### Testing the Invoice Management System with Semantic Kernel
+
+### 1. Start a new conversation
+POST {{SemanticKernelLearning04_HostAddress}}/api/agent/start
+Content-Type: application/json
+
+###
+
+### 2. Verify payment status of a specific invoice
+POST {{SemanticKernelLearning04_HostAddress}}/api/agent
+Content-Type: application/json
+
+{
+    "question": "¿Puedes verificar el estado de pago de la factura INV-202412-0001?",
+    "threadId": "{{conversationId}}"
+}
+
+###
+
+### 3. Check all unpaid invoices
+POST {{SemanticKernelLearning04_HostAddress}}/api/agent
+Content-Type: application/json
+
+{
+    "question": "Muéstrame todas las facturas sin pagar",
+    "threadId": "{{conversationId}}"
+}
+
+###
+
+### 4. Create a new invoice draft
+POST {{SemanticKernelLearning04_HostAddress}}/api/agent
+Content-Type: application/json
+
+{
+    "question": "Crea una prefactura para juan.perez@email.com por servicios de registro de marca por $2,000 pesos con vencimiento en 45 días",
+    "threadId": "{{conversationId}}"
+}
+
+###
+
+### 5. Mark an invoice as paid
+POST {{SemanticKernelLearning04_HostAddress}}/api/agent
+Content-Type: application/json
+
+{
+    "question": "Marca la factura INV-202412-0002 como pagada",
+    "threadId": "{{conversationId}}"
+}
+
+###
+
+### 6. Get customer information
+POST {{SemanticKernelLearning04_HostAddress}}/api/agent
+Content-Type: application/json
+
+{
+    "question": "Dame información detallada del cliente maria.garcia@email.com",
+    "threadId": "{{conversationId}}"
+}
+
+###
+
+### 7. Complex query - Check overdue invoices
+POST {{SemanticKernelLearning04_HostAddress}}/api/agent
+Content-Type: application/json
+
+{
+    "question": "¿Qué facturas están vencidas y cuánto dinero representan en total?",
+    "threadId": "{{conversationId}}"
+}
+
+###
+
+### 8. Natural language query
+POST {{SemanticKernelLearning04_HostAddress}}/api/agent
+Content-Type: application/json
+
+{
+    "question": "Necesito crear una factura para Ana Rodríguez por un poder notarial de $450 que venza en 30 días",
+    "threadId": "{{conversationId}}"
+}
+
+###
+
+

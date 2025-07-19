@@ -1,0 +1,51 @@
+@page
+@model SemanticKernelLearning04.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">
+        <i class="fas fa-file-invoice-dollar text-primary me-3"></i>
+        Sistema de Gestión de Facturas
+    </h1>
+    <p class="lead">
+        <i class="fas fa-robot me-2"></i>
+        Bienvenido al sistema de gestión de facturas con Semantic Kernel
+    </p>
+    <div class="mt-4">
+        <a class="btn btn-primary btn-lg" href="/Chat" role="button">
+            <i class="fas fa-comments me-2"></i>Iniciar Chat
+        </a>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-search fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Consultar Facturas</h5>
+                    <p class="card-text">Verifica el estado de pago y detalles de cualquier factura del sistema.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-plus-circle fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Crear Prefacturas</h5>
+                    <p class="card-text">Genera nuevas prefacturas para clientes de forma rápida y sencilla.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Gestión de Clientes</h5>
+                    <p class="card-text">Consulta información detallada de clientes y su historial de facturas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

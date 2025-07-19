@@ -1,6 +1,9 @@
 @DurableTask.Api_HostAddress = http://localhost:5134
 
-GET {{DurableTask.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{DurableTask.Api_HostAddress}}/api/payments
+Content-Type: application/json
 
-###
+{
+    "orderId": "123",
+    "paymentMethodId": "456"
+}
