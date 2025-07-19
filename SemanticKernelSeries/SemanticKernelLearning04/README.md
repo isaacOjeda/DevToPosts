@@ -1,678 +1,523 @@
-# Sistema de GestiÛn de Facturas con Semantic Kernel y SQLite
+Ôªø## üß† Crea tu propio agente conversacional con Semantic Kernel
 
-Este proyecto demuestra cÛmo crear un sistema completo de gestiÛn de facturas usando **Semantic Kernel**, **Entity Framework Core** y **SQLite** para persistir datos.
+¬øTe imaginas construir un asistente conversacional que entienda lenguaje natural y, adem√°s, sea capaz de ejecutar funciones reales de tu sistema? Con el **Agent Framework de Semantic Kernel**, eso ya no es solo posible, sino sorprendentemente sencillo.
 
-## ?? CaracterÌsticas
+En este tutorial te voy a mostrar c√≥mo crear un **agente inteligente especializado en gesti√≥n de facturas**, dise√±ado para ayudar a abogados en una notar√≠a p√∫blica. Este agente no solo entiende lo que le pides, sino que tambi√©n puede:
 
-### ?? GestiÛn de Facturas
-- ? Verificar estado de pago de facturas especÌficas
-- ?? Crear prefacturas (borradores) para clientes
-- ?? Consultar facturas pendientes de pago
-- ?? Marcar facturas como pagadas
-- ?? GestiÛn de informaciÛn de clientes
-- ?? IdentificaciÛn autom·tica de facturas vencidas
+- Consultar el estado de una factura.
+- Crear prefacturas autom√°ticamente.
+- Ver facturas vencidas.
+- Marcar facturas como pagadas.
+- Obtener informaci√≥n detallada de un cliente.
 
-### ?? Inteligencia Artificial
-- **Semantic Kernel Agents** para procesamiento de lenguaje natural
-- **Function Calling** autom·tico para ejecutar acciones especÌficas
-- **Persistencia de conversaciones** en SQLite
-- **Respuestas contextuales** con historial de conversaciÛn
+Todo esto lo logra invocando funciones reales en C#, conectadas a una base de datos real y expuestas mediante un plugin personalizado.
 
-## ??? Arquitectura
+Durante el art√≠culo veremos paso a paso:
 
-```
-SemanticKernelLearning04/
-??? Models/
-?   ??? Conversation.cs          # Modelo para conversaciones
-?   ??? ConversationMessage.cs   # Mensajes de conversaciÛn
-?   ??? Customer.cs              # Modelo de clientes
-?   ??? Invoice.cs               # Modelo de facturas
-??? Data/
-?   ??? ConversationDbContext.cs # DbContext con EF Core
-??? Services/
-?   ??? ConversationService.cs   # Servicio de conversaciones
-?   ??? InvoiceService.cs        # Servicio de facturas
-??? Plugins/
-    ??? InvoicesPlugin.cs        # Plugin con funciones de facturas
-```
+- C√≥mo configurar Semantic Kernel con Azure OpenAI.
+- C√≥mo definir tus propias funciones con `[KernelFunction]`.
+- C√≥mo crear un `ChatCompletionAgent` con instrucciones personalizadas.
+- C√≥mo ejecutar al agente dentro de una API HTTP.
+- Y c√≥mo mantener conversaciones con historial persistente.
 
-## ?? Modelos de Datos
+Adem√°s, el proyecto incluye un cliente web de ejemplo (tipo chat) para que puedas probarlo todo en vivo y adaptar la soluci√≥n a tus propios casos de uso.
 
-### Invoice (Factura)
-- **InvoiceNumber**: N˙mero ˙nico de factura
-- **Customer**: Cliente asociado
-- **Description**: DescripciÛn del servicio
-- **Amount**: Monto de la factura
-- **Status**: Estado (Borrador, Enviada, Pagada, Vencida, Cancelada)
-- **DueDate**: Fecha de vencimiento
-- **PaidDate**: Fecha de pago (si aplica)
+> üîó Todo el c√≥digo est√° disponible en este repositorio:  
+> [github.com/isaacOjeda/DevToPosts/tree/main/SemanticKernelSeries/SemanticKernelLearning04](https://github.com/isaacOjeda/DevToPosts/tree/main/SemanticKernelSeries/SemanticKernelLearning04)
 
-### Customer (Cliente)
-- **Name**: Nombre completo
-- **Email**: Email ˙nico
-- **Phone**: TelÈfono
-- **Address**: DirecciÛn
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/c7f8juqe3rrci13y7v6c.png)
+## üß† ¬øQu√© es el Agent Framework en Semantic Kernel?
 
-## ??? ConfiguraciÛn
+El **Agent Framework** es una de las capacidades m√°s potentes introducidas en las versiones recientes de [Semantic Kernel](https://github.com/microsoft/semantic-kernel): un sistema que permite **crear agentes conversacionales inteligentes** con la capacidad de razonar, planificar e invocar funciones definidas por el desarrollador para lograr un objetivo.
 
-### 1. Dependencias
-```xml
-<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />
-<PackageReference Include="Microsoft.SemanticKernel" Version="1.60.0" />
-<PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.60.0" />
-```
+A diferencia de un chatbot tradicional basado en reglas, un agente en Semantic Kernel:
 
-### 2. Base de Datos
-- **SQLite** para almacenamiento local
-- **EF Core** para mapeo objeto-relacional
-- **Datos de muestra** se crean autom·ticamente al iniciar
+- Comprende instrucciones en lenguaje natural.
+- Decide qu√© acciones tomar en base al contexto disponible.
+- Invoca funciones (tambi√©n llamadas ‚Äúskills‚Äù o ‚Äúplugins‚Äù) que t√∫ defines en c√≥digo.
+- Puede encadenar m√∫ltiples pasos de razonamiento para llegar a un resultado.
 
-### 3. ConfiguraciÛn del Agent
-```csharp
-var agent = new ChatCompletionAgent()
-{
-    Name = "Asistente",
-    Instructions = """
-                   Eres un asistente de abogados en una notarÌa p˙blica. 
-                   Tu tarea es ayudar a los abogados a gestionar y verificar el estado de las facturas.
-                   """,
-    Kernel = agentKernel,
-    Arguments = new KernelArguments(
-        new OpenAIPromptExecutionSettings()
-        {
-            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
-        })
-};
-```
+Este modelo es ideal para construir asistentes especializados con conocimientos de negocio y herramientas personalizadas.
 
-## ?? Funciones Disponibles
+### üéØ Caso de uso: un asistente de facturaci√≥n
 
-### 1. VerifyPaymentAsync
-Verifica el estado de una factura especÌfica.
-```
-"øPuedes verificar el estado de pago de la factura INV-202412-0001?"
-```
+En este tutorial vamos a construir un ejemplo real usando el Agent Framework: un **asistente conversacional para abogados en una notar√≠a p√∫blica**, cuya funci√≥n es **gestionar facturas** mediante lenguaje natural.
 
-### 2. CreateInvoiceDraftAsync
-Crea una nueva prefactura para un cliente.
-```
-"Crea una prefactura para juan.perez@email.com por servicios de registro de marca por $2,000 pesos"
-```
+El asistente ser√° capaz de:
 
-### 3. GetUnpaidInvoicesAsync
-Obtiene todas las facturas sin pagar.
-```
-"MuÈstrame todas las facturas sin pagar"
-```
+- Verificar si una factura est√° pagada o vencida.
+- Crear prefacturas para clientes nuevos.
+- Consultar el listado de facturas pendientes de pago.
+- Marcar una factura como pagada.
+- Obtener informaci√≥n detallada de un cliente y su historial de facturaci√≥n.
 
-### 4. MarkInvoiceAsPaidAsync
-Marca una factura como pagada.
-```
-"Marca la factura INV-202412-0002 como pagada"
-```
+Todo esto ser√° posible gracias a una capa de funciones en C# expuestas al agente mediante anotaciones `[KernelFunction]`, y alimentadas por un servicio de backend que accede a la base de datos.
 
-### 5. GetCustomerInfoAsync
-Obtiene informaciÛn detallada de un cliente.
-```
-"Dame informaciÛn detallada del cliente maria.garcia@email.com"
-```
+### üß¨ ¬øPor qu√© usar agentes en lugar de comandos o controladores tradicionales?
 
-## ?? Datos de Muestra
+Con el Agent Framework:
 
-El sistema incluye datos de muestra que se crean autom·ticamente:
+- El usuario no necesita conocer los comandos disponibles.
+- El agente elige por s√≠ mismo la funci√≥n que debe usar.
+- Puedes cambiar o extender el comportamiento del sistema sin modificar el frontend.
+- La experiencia es m√°s natural, fluida y adaptable a distintos usuarios.
 
-### Clientes
-- Juan PÈrez (juan.perez@email.com)
-- MarÌa GarcÌa (maria.garcia@email.com)
-- Carlos LÛpez (carlos.lopez@email.com)
-- Ana RodrÌguez (ana.rodriguez@email.com)
+Esto hace que construir asistentes LLM especializados con Semantic Kernel sea una excelente opci√≥n para **interfaces inteligentes** sobre sistemas de negocio existentes, especialmente en entornos con operaciones rutinarias, como la gesti√≥n de facturas.
 
-### Facturas
-- **INV-202412-0001**: Servicios legales - Compraventa (PAGADA)
-- **INV-202412-0002**: ConstituciÛn de sociedad (ENVIADA)
-- **INV-202412-0003**: Testamento p˙blico abierto (VENCIDA)
-- **INV-202412-0004**: Poder notarial (BORRADOR)
-- **INV-202412-0005**: CancelaciÛn de hipoteca (VENCIDA)
+## ‚öôÔ∏è Requisitos previos y setup del entorno
 
-## ?? Pruebas
+Antes de construir nuestro asistente de facturaci√≥n, necesitamos preparar nuestro proyecto con las dependencias necesarias y configurar el acceso a un modelo de lenguaje compatible (en este caso, Azure OpenAI).
 
-Utiliza el archivo `SemanticKernelLearning04.http` para probar todas las funcionalidades:
+Este ejemplo est√° construido sobre .NET 9, con soporte para SQLite como base de datos local, y aprovecha la integraci√≥n entre Semantic Kernel y Azure OpenAI.
 
-1. **Iniciar conversaciÛn**: Crear un nuevo hilo de conversaciÛn
-2. **Verificar facturas**: Consultar estado de facturas especÌficas
-3. **Gestionar pagos**: Marcar facturas como pagadas
-4. **Crear facturas**: Generar nuevas prefacturas
-5. **Consultas complejas**: Usar lenguaje natural para consultas avanzadas
+> üóÇÔ∏è **Puedes consultar el c√≥digo completo y funcional de este proyecto en el repositorio:**  
+> üîó [github.com/isaacOjeda/DevToPosts/tree/main/SemanticKernelSeries/SemanticKernelLearning04](https://github.com/isaacOjeda/DevToPosts/tree/main/SemanticKernelSeries/SemanticKernelLearning04)  
+> All√≠ encontrar√°s todos los archivos de configuraci√≥n, modelos, servicios y ejemplos necesarios para correr este asistente de forma local o integrarlo en tu aplicaci√≥n.
 
-## ?? CaracterÌsticas Destacadas
+### üì¶ Paquetes necesarios
 
-### Respuestas Visuales
-Las respuestas incluyen emojis y formato para mejor legibilidad:
-```
-?? **Factura: INV-202412-0001**
-?? Cliente: Juan PÈrez
-?? DescripciÛn: Servicios legales - Compraventa
-?? Monto: $1,500.00
-?? Fecha de vencimiento: 15/12/2024
-? Estado: Pagada
-?? Fecha de pago: 20/12/2024
-```
-
-### Function Calling Inteligente
-El agente selecciona autom·ticamente la funciÛn correcta bas·ndose en la consulta del usuario, sin necesidad de especificar par·metros tÈcnicos.
-
-### Persistencia Completa
-- Conversaciones guardadas en SQLite
-- Historial completo de interacciones
-- Datos de facturas persistentes entre sesiones
-
-## ?? Conceptos Aprendidos
-
-1. **Semantic Kernel Agents**: ConfiguraciÛn y uso de agentes inteligentes
-2. **Function Calling**: CreaciÛn de plugins con funciones especÌficas
-3. **Entity Framework Core**: Mapeo de objetos y relaciones
-4. **SQLite Integration**: Persistencia de datos local
-5. **Dependency Injection**: InyecciÛn de servicios en plugins
-6. **Async/Await Patterns**: Manejo asÌncrono de datos
-7. **Business Logic**: ImplementaciÛn de reglas de negocio
-
-Este ejemplo es perfecto para demostrar cÛmo combinar IA conversacional con persistencia de datos real en aplicaciones empresariales.
-
----
-
-# Tutorial: Sistema de GestiÛn de Facturas con Semantic Kernel y Agentes de IA
-
-## ?? IntroducciÛn
-
-Este tutorial te guiar· paso a paso para crear un sistema completo de gestiÛn de facturas utilizando **Microsoft Semantic Kernel** y **agentes conversacionales**. El proyecto demuestra cÛmo integrar inteligencia artificial con APIs REST para crear un asistente que puede manejar operaciones de negocio complejas usando lenguaje natural.
-
-### øQuÈ aprender·s?
-
-- **ConfiguraciÛn de Semantic Kernel**: IntegraciÛn con Azure OpenAI
-- **CreaciÛn de Agentes Conversacionales**: ChatCompletionAgent para procesamiento de lenguaje natural
-- **Function Calling**: Plugins personalizados que el agente puede ejecutar autom·ticamente
-- **API Endpoints**: ExposiciÛn de funcionalidades a travÈs de REST APIs
-- **Persistencia de Conversaciones**: Almacenamiento del historial en SQLite
-
-### øQuÈ construiremos?
-
-Un sistema completo donde los usuarios pueden:
-- Verificar estados de facturas usando lenguaje natural
-- Crear nuevas facturas con comandos simples
-- Consultar informaciÛn de clientes
-- Gestionar pagos y estados de facturas
-- Mantener conversaciones contextuales con historial persistente
-
----
-
-## ?? Desarrollo
-
-### 1. ConfiguraciÛn Inicial del Proyecto
-
-#### 1.1 Dependencias Necesarias
-
-Primero, necesitamos instalar los paquetes NuGet requeridos para Semantic Kernel y Entity Framework:
+El Agent Framework se encuentra dentro del paquete `Microsoft.SemanticKernel.Agents.Core`, por lo que debes incluir expl√≠citamente las dependencias en tu archivo `.csproj`.
 
 ```xml
-<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />
-<PackageReference Include="Microsoft.SemanticKernel" Version="1.60.0" />
-<PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.60.0" />
+<ItemGroup>
+  <PackageReference Include="Microsoft.SemanticKernel" Version="1.60.0" />
+  <PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.60.0" />
+  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
+  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />
+  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+</ItemGroup>
 ```
 
-#### 1.2 ConfiguraciÛn de Azure OpenAI
+Esto nos da acceso al n√∫cleo de Semantic Kernel, las capacidades de agentes, as√≠ como herramientas necesarias para la persistencia y desarrollo web.
 
-En `appsettings.json`, configura tu instancia de Azure OpenAI:
+### üß™ Configurando el Kernel
 
-```json
-{
-  "AzureOpenAI": {
-    "DeploymentName": "gpt-4",
-    "ApiKey": "tu-api-key-aquÌ",
-    "Endpoint": "https://tu-instancia.openai.azure.com/",
-    "ModelId": "gpt-4"
-  },
-  "ConnectionStrings": {
-    "DefaultConnection": "Data Source=conversations.db"
-  }
-}
-```
-
-### 2. CreaciÛn del Plugin de Facturas
-
-#### 2.1 Estructura del Plugin
-
-Un plugin en Semantic Kernel es una clase que contiene mÈtodos decorados con `[KernelFunction]`. Estos mÈtodos pueden ser invocados autom·ticamente por el agente:
+El kernel es el n√∫cleo que conecta el modelo de lenguaje con tus plugins. En este ejemplo, usamos Azure OpenAI para procesar instrucciones en lenguaje natural. A continuaci√≥n se muestra c√≥mo configurar el kernel con los valores de `appsettings.json`:
 
 ```csharp
-public class InvoicesPlugin
+public static IServiceCollection AddSemanticKernel(this IServiceCollection services, IConfiguration configuration)
 {
-    private readonly InvoiceService _invoiceService;
+    var azureOpenAIConfig = configuration.GetSection("AzureOpenAI");
 
-    public InvoicesPlugin(InvoiceService invoiceService)
-    {
-        _invoiceService = invoiceService;
-    }
+    services.AddAzureOpenAIChatCompletion(
+        deploymentName: azureOpenAIConfig["DeploymentName"]!,
+        apiKey: azureOpenAIConfig["ApiKey"]!,
+        endpoint: azureOpenAIConfig["Endpoint"]!,
+        modelId: azureOpenAIConfig["ModelId"]!
+    );
 
-    [KernelFunction]
-    [Description("Verifica el estado de pago de una factura especÌfica usando su n˙mero de factura.")]
-    public async Task<string> VerifyPaymentAsync(
-        [Description("N˙mero de la factura a verificar (ej: INV-202412-0001)")] 
-        string numeroFactura)
-    {
-        // ImplementaciÛn del mÈtodo
-    }
-}
-```
+    services.AddTransient(serviceProvider => new Kernel(serviceProvider));
 
-#### 2.2 Funciones Clave del Plugin
-
-**VerificaciÛn de Pagos:**
-```csharp
-[KernelFunction]
-[Description("Verifica el estado de pago de una factura especÌfica usando su n˙mero de factura.")]
-public async Task<string> VerifyPaymentAsync([Description("N˙mero de la factura a verificar")] string numeroFactura)
-{
-    try
-    {
-        var invoice = await _invoiceService.GetInvoiceByNumberAsync(numeroFactura);
-        
-        if (invoice == null)
-        {
-            return $"? No se encontrÛ ninguna factura con el n˙mero: {numeroFactura}";
-        }
-
-        var result = new StringBuilder();
-        result.AppendLine($"?? **Factura: {invoice.InvoiceNumber}**");
-        result.AppendLine($"?? Cliente: {invoice.Customer.Name}");
-        result.AppendLine($"?? Monto: ${invoice.Amount:F2}");
-        result.AppendLine($"?? Estado: {GetStatusText(invoice.Status)}");
-
-        return result.ToString();
-    }
-    catch (Exception ex)
-    {
-        return $"? Error al verificar la factura: {ex.Message}";
-    }
-}
-```
-
-**CreaciÛn de Facturas:**
-```csharp
-[KernelFunction]
-[Description("Realiza una prefactura (borrador) para un cliente especÌfico.")]
-public async Task<string> CreateInvoiceDraftAsync(
-    [Description("Email del cliente para la prefactura")] string clienteEmail,
-    [Description("DescripciÛn del servicio o trabajo realizado")] string descripcion,
-    [Description("Monto de la factura en pesos")] decimal monto,
-    [Description("DÌas hasta el vencimiento (opcional, por defecto 30 dÌas)")] int diasVencimiento = 30)
-{
-    // ImplementaciÛn completa en el archivo del proyecto
-}
-```
-
-### 3. ConfiguraciÛn del Agente Conversacional
-
-#### 3.1 Registro de Servicios
-
-Utilizamos la inyecciÛn de dependencias para configurar todos los servicios necesarios:
-
-```csharp
-public static class ServiceCollectionExtensions
-{
-    public static IServiceCollection AddSemanticKernel(this IServiceCollection services, IConfiguration configuration)
-    {
-        // Configurar Azure OpenAI desde appsettings
-        var azureOpenAIConfig = configuration.GetSection("AzureOpenAI");
-        services.AddAzureOpenAIChatCompletion(
-            deploymentName: azureOpenAIConfig["DeploymentName"]!,
-            apiKey: azureOpenAIConfig["ApiKey"]!,
-            endpoint: azureOpenAIConfig["Endpoint"]!,
-            modelId: azureOpenAIConfig["ModelId"]!
-        );
-
-        services.AddTransient(serviceProvider => new Kernel(serviceProvider));
-        
-        return services;
-    }
-}
-```
-
-#### 3.2 CreaciÛn del Agente
-
-El agente se configura como un servicio con clave para poder inyectarlo especÌficamente:
-
-```csharp
-public static IServiceCollection AddAgents(this IServiceCollection services)
-{
-    services.AddKeyedTransient<ChatCompletionAgent>("AssistantAgent", (sp, _) =>
-    {
-        var kernel = sp.GetRequiredService<Kernel>();
-        var agentKernel = kernel.Clone();
-
-        // Registrar el InvoicesPlugin con inyecciÛn de dependencias
-        var invoiceService = sp.GetRequiredService<InvoiceService>();
-        agentKernel.ImportPluginFromObject(new InvoicesPlugin(invoiceService));
-
-        var agent = new ChatCompletionAgent()
-        {
-            Name = "Asistente",
-            Instructions = """
-                       Eres un asistente de abogados en una notarÌa p˙blica. 
-                       Tu tarea es ayudar a los abogados a gestionar y verificar el estado de las facturas.
-                       
-                       Funciones disponibles:
-                       - Verificar el estado de pago de facturas especÌficas
-                       - Crear prefacturas para clientes
-                       - Consultar facturas pendientes de pago
-                       - Marcar facturas como pagadas
-                       - Consultar informaciÛn de clientes
-                       
-                       Siempre proporciona informaciÛn clara y detallada sobre el estado de las facturas.
-                       Usa emojis para hacer las respuestas m·s visuales y f·ciles de entender.
-                       """,
-            Kernel = agentKernel,
-            Arguments = new KernelArguments(
-                new OpenAIPromptExecutionSettings()
-                {
-                    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
-                })
-        };
-
-        return agent;
-    });
-    
     return services;
 }
 ```
 
-**Puntos clave de la configuraciÛn:**
+La configuraci√≥n en `appsettings.json` se ver√≠a algo as√≠:
 
-1. **Instructions**: Define el comportamiento y personalidad del agente
-2. **FunctionChoiceBehavior.Auto()**: Permite al agente decidir autom·ticamente quÈ funciones llamar
-3. **Kernel Clone**: Cada agente tiene su propia instancia del kernel con sus plugins especÌficos
-
-### 4. ImplementaciÛn de Endpoints REST
-
-#### 4.1 Estructura de Endpoints
-
-Los endpoints proporcionan la interfaz REST para interactuar con el agente:
-
-```csharp
-public static class AgentEndpoints
-{
-    public static WebApplication MapAgentEndpoints(this WebApplication app)
-    {
-        var group = app.MapGroup("/api/agent")
-            .WithTags("Agent")
-            .WithOpenApi();
-
-        // Endpoint para iniciar conversaciÛn
-        group.MapPost("/start", async (ConversationService conversationService) =>
-        {
-            var conversationId = await conversationService.CreateConversationAsync();
-            return Results.Ok(new { ConversationId = conversationId });
-        });
-
-        // Endpoint principal para interactuar con el agente
-        group.MapPost("/", async (AskQuestionRequest request,
-            [FromKeyedServices("AssistantAgent")] ChatCompletionAgent agent,
-            ConversationService conversationService) =>
-        {
-            // ImplementaciÛn del endpoint principal
-        });
-
-        return app;
-    }
+```json
+"AzureOpenAI": {
+  "DeploymentName": "notaria-assistant",
+  "ApiKey": "TU_API_KEY",
+  "Endpoint": "https://tuservicio.openai.azure.com/",
+  "ModelId": "gpt-35-turbo"
 }
 ```
 
-#### 4.2 Endpoint Principal de ConversaciÛn
+Con esto, el `Kernel` queda disponible v√≠a inyecci√≥n de dependencias y listo para clonar, personalizar o conectar a nuestros agentes.
 
-Este es el corazÛn del sistema, donde se maneja la interacciÛn con el agente:
+### üß± Servicios base y modelos de dominio
+
+Nuestro agente necesita acceder a datos del mundo real, por lo que construimos un servicio `InvoiceService` con m√©todos como:
+
+- `GetInvoiceByNumberAsync`
+- `CreateInvoiceAsync`
+- `MarkInvoiceAsPaidAsync`
+- `GetUnpaidInvoicesAsync`
+- `GetCustomerByEmailAsync`
+
+Este servicio ser√° inyectado en el plugin que veremos en la pr√≥xima secci√≥n, y expone la l√≥gica de negocio que el agente puede usar para resolver instrucciones. Si ya tienes una capa de servicios en tu aplicaci√≥n, puedes integrarla directamente.
+
+## üß© Definir tus funciones (skills/plugins)
+
+Una de las capacidades m√°s poderosas del Agent Framework es permitir que tus agentes ejecuten **funciones reales escritas en C#**. Estas funciones se registran como "plugins" usando decoradores especiales, y luego el agente las puede invocar cuando detecta que son necesarias para cumplir una instrucci√≥n del usuario.
+
+En este caso, hemos creado un plugin llamado `InvoicesPlugin`, que expone cinco funciones relacionadas con facturaci√≥n. Cada una est√° decorada con el atributo `[KernelFunction]`, lo que la hace visible para Semantic Kernel.
+
+### üß† ¬øQu√© es un plugin?
+
+Un plugin en Semantic Kernel es simplemente una **clase con m√©todos p√∫blicos asincr√≥nicos** decorados con `[KernelFunction]`. Adem√°s, puedes usar `[Description]` en los par√°metros y m√©todos para mejorar la comprensi√≥n del agente sobre lo que hace cada funci√≥n.
+
+> üóÇÔ∏è El c√≥digo completo del plugin puede consultarse en el repositorio:  
+> [Ver InvoicesPlugin.cs en GitHub](https://github.com/isaacOjeda/DevToPosts/tree/main/SemanticKernelSeries/SemanticKernelLearning04)
+
+### üßæ Ejemplo 1: Verificar el estado de una factura
+
+```csharp
+[KernelFunction]
+[Description("Verifica el estado de pago de una factura espec√≠fica usando su n√∫mero de factura.")]
+public async Task<string> VerifyPaymentAsync(
+    [Description("N√∫mero de la factura a verificar (ej: INV-202412-0001)")] string numeroFactura)
+{
+    var invoice = await invoiceService.GetInvoiceByNumberAsync(numeroFactura);
+
+    if (invoice == null)
+        return $"‚ùå No se encontr√≥ ninguna factura con el n√∫mero: {numeroFactura}";
+
+    var result = new StringBuilder();
+    result.AppendLine($"üìã **Factura: {invoice.InvoiceNumber}**");
+    result.AppendLine($"üî∏ Estado: {GetStatusText(invoice.Status)}");
+    // ...otros campos visuales
+
+    return result.ToString();
+}
+```
+
+> üí° **Nota:**  
+> En este ejemplo, todas las funciones del plugin reciben y retornan datos en formato `string`, ya que el enfoque est√° en mantener el ejemplo simple y f√°cil de seguir.  
+> Sin embargo, el Agent Framework de Semantic Kernel **soporta objetos complejos como par√°metros de entrada y salida**. Puedes retornar clases personalizadas, listas u objetos anidados, y el agente ser√° capaz de interpretarlos, formatearlos o incluso razonar sobre ellos en sus respuestas.
+> 
+> En un escenario real, podr√≠as devolver una `InvoiceDetail` con propiedades estructuradas en lugar de una cadena formateada, lo que abre la puerta a integraciones m√°s ricas o adaptadas al canal (por ejemplo, APIs, UIs o chatbots).
+
+Este m√©todo se encarga de buscar una factura por n√∫mero y devolver su estado, fecha de vencimiento, monto y otra informaci√≥n √∫til. Como puedes ver, el resultado se formatea para ser legible y amigable, incluyendo emojis para mejorar la experiencia.
+
+### ‚úçÔ∏è Ejemplo 2: Crear una prefactura
+
+```csharp
+[KernelFunction]
+[Description("Realiza una prefactura para un cliente usando email, descripci√≥n, monto y d√≠as hasta el vencimiento.")]
+public async Task<string> CreateInvoiceDraftAsync(
+    string clienteEmail,
+    string descripcion,
+    decimal monto,
+    int diasVencimiento = 30)
+{
+    var customer = await invoiceService.GetCustomerByEmailAsync(clienteEmail);
+    if (customer == null)
+        return $"‚ùå No se encontr√≥ ning√∫n cliente con el email: {clienteEmail}";
+
+    var dueDate = DateTime.UtcNow.AddDays(diasVencimiento);
+    var invoice = await invoiceService.CreateInvoiceAsync(
+        customer.Id, descripcion, monto, dueDate, "Factura generada autom√°ticamente");
+
+    return $"‚úÖ Prefactura creada: {invoice.InvoiceNumber} para {customer.Name}";
+}
+```
+
+Este m√©todo genera una factura en estado "borrador", √∫til para cuando un abogado quiere adelantar una facturaci√≥n para un cliente espec√≠fico.
+
+### üß† ¬øPor qu√© usar `[KernelFunction]`?
+
+Al decorar tus funciones con este atributo, est√°s dando al agente la capacidad de:
+
+- Descubrir qu√© herramientas tiene disponibles.
+- Seleccionar de forma autom√°tica la funci√≥n correcta en base a la intenci√≥n del usuario.
+- Combinar funciones si es necesario (por ejemplo, buscar cliente ‚Üí generar factura).
+
+Gracias a esto, no necesitas escribir prompts complejos ni reglas condicionales. El agente decide qu√© hacer en tiempo de ejecuci√≥n.
+
+## ü§ñ Crear un agente y asignarle objetivos
+
+Una vez que tenemos definido nuestro plugin con las funciones necesarias, es hora de **crear un agente** que lo utilice. Un agente es una instancia del tipo `ChatCompletionAgent` que sabe c√≥mo interactuar con un modelo de lenguaje, tiene acceso a un conjunto de funciones y puede operar con base en instrucciones personalizadas.
+
+En este paso lo conectamos todo: el kernel, el plugin, y la intenci√≥n del asistente.
+
+### üß† ¬øQu√© es un `ChatCompletionAgent`?
+
+El `ChatCompletionAgent` es una implementaci√≥n del Agent Framework de Semantic Kernel que permite interactuar con modelos de lenguaje compatibles (como GPT-4 o GPT-3.5) de forma conversacional. Este tipo de agente:
+
+- Usa un kernel preconfigurado con modelos y funciones.
+- Puede tener instrucciones personalizadas (‚Äúpersona‚Äù o ‚Äúrol‚Äù).
+- Decide autom√°ticamente qu√© funci√≥n usar, si corresponde.
+- Mantiene un contexto conversacional.
+
+### üèóÔ∏è Registrando el agente con DI
+
+En este ejemplo, configuramos el agente como un servicio usando la extensi√≥n `AddAgents`. Esto permite que el agente se cree con acceso al kernel y al `InvoicesPlugin`:
+
+```csharp
+services.AddKeyedTransient<ChatCompletionAgent>("AssistantAgent", (sp, _) =>
+{
+    var kernel = sp.GetRequiredService<Kernel>();
+    var agentKernel = kernel.Clone();
+
+    // Registramos el plugin de facturas
+    var invoiceService = sp.GetRequiredService<InvoiceService>();
+    agentKernel.ImportPluginFromObject(new InvoicesPlugin(invoiceService));
+
+    var agent = new ChatCompletionAgent()
+    {
+        Name = "Asistente",
+        Instructions = """
+            Eres un asistente de abogados en una notar√≠a p√∫blica. 
+            Tu tarea es ayudar a los abogados a gestionar y verificar el estado de las facturas.
+            
+            Funciones disponibles:
+            - Verificar el estado de pago de facturas espec√≠ficas
+            - Crear prefacturas para clientes
+            - Consultar facturas pendientes de pago
+            - Marcar facturas como pagadas
+            - Consultar informaci√≥n de clientes
+
+            Siempre proporciona informaci√≥n clara y detallada sobre el estado de las facturas.
+            Usa emojis para hacer las respuestas m√°s visuales y f√°ciles de entender.
+        """,
+        Kernel = agentKernel,
+        Arguments = new KernelArguments(
+            new OpenAIPromptExecutionSettings()
+            {
+                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+            })
+    };
+
+    return agent;
+});
+```
+
+> üß© Este agente se construye a partir de un `Kernel` clonado. As√≠ puedes tener m√∫ltiples agentes con diferentes plugins, instrucciones o configuraciones sin interferencias entre ellos.
+
+### üó£Ô∏è Instrucciones: c√≥mo le decimos al agente qui√©n es
+
+La propiedad `Instructions` permite definir la personalidad, contexto y objetivos del agente. Aqu√≠ estamos usando un sistema de "prompt largo" al estilo system message:
+
+```csharp
+Instructions = """
+    Eres un asistente de abogados en una notar√≠a p√∫blica. 
+    Tu tarea es ayudar a los abogados a gestionar y verificar el estado de las facturas.
+    ...
+"""
+```
+
+Este mensaje gu√≠a al modelo para que entienda el contexto en el que opera, el lenguaje que debe usar y el tipo de resultados esperados.
+
+### ‚öôÔ∏è Control de funciones autom√°ticas
+
+El fragmento clave para habilitar la selecci√≥n autom√°tica de funciones es:
+
+```csharp
+Arguments = new KernelArguments(
+    new OpenAIPromptExecutionSettings()
+    {
+        FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+    })
+```
+
+Esto permite que el modelo analice la intenci√≥n del usuario y decida si debe invocar alguna funci√≥n del plugin registrado. No es necesario indicarle expl√≠citamente el nombre de la funci√≥n: el agente elige por s√≠ mismo en funci√≥n del mensaje recibido.
+
+Con este paso, ya tenemos un **asistente especializado** corriendo sobre Semantic Kernel, con acceso completo a las funciones del plugin de facturaci√≥n y configurado para operar en el contexto de una notar√≠a p√∫blica.
+
+## üöÄ Ejecutar el agente y manejar conversaciones
+
+Una vez que nuestro agente est√° registrado y conectado a sus funciones, llega el momento de **ponerlo en acci√≥n**. En este ejemplo, creamos una API HTTP que permite a cualquier cliente (como una app web o m√≥vil) interactuar con el asistente de forma conversacional.
+
+Todo el ciclo se orquesta desde un conjunto de endpoints dentro de `AgentEndpoints.cs`.
+
+### üåê Endpoint para iniciar una conversaci√≥n
+
+El primer paso en cualquier interacci√≥n es **crear un hilo de conversaci√≥n**. Esto permite almacenar el historial y mantener contexto entre m√∫ltiples mensajes.
+
+```csharp
+group.MapPost("/start", async (ConversationService conversationService) =>
+{
+    var conversationId = await conversationService.CreateConversationAsync();
+    return Results.Ok(new { ConversationId = conversationId });
+});
+```
+
+Este endpoint genera un `ConversationId` √∫nico que luego ser√° utilizado en cada mensaje posterior. La conversaci√≥n se almacena en la base de datos con su historial asociado.
+
+### üí¨ Enviar una pregunta al agente
+
+El segundo endpoint es el m√°s importante: recibe un mensaje del usuario y devuelve la respuesta del agente. Lo interesante es que **reconstruye el historial completo** antes de invocar el modelo, lo que permite mantener coherencia y continuidad.
 
 ```csharp
 group.MapPost("/", async (AskQuestionRequest request,
     [FromKeyedServices("AssistantAgent")] ChatCompletionAgent agent,
     ConversationService conversationService) =>
 {
-    try
-    {
-        // 1. Obtener historial de conversaciÛn desde la base de datos
-        var conversation = await conversationService.GetConversationAsync(request.ThreadId);
-        if (conversation == null)
-        {
-            return Results.BadRequest("Conversation not found");
-        }
-
-        // 2. Guardar mensaje del usuario en la base de datos
-        await conversationService.AddMessageAsync(request.ThreadId, request.Question, "user");
-
-        // 3. Crear historial de chat desde mensajes de base de datos
-        var chatHistory = new ChatHistory();
-        foreach (var dbMessage in conversation.Messages)
-        {
-            if (dbMessage.Role == "user")
-                chatHistory.AddUserMessage(dbMessage.Content);
-            else if (dbMessage.Role == "assistant")
-                chatHistory.AddAssistantMessage(dbMessage.Content);
-        }
-
-        // 4. Agregar el mensaje actual del usuario
-        chatHistory.AddUserMessage(request.Question);
-
-        // 5. Crear hilo de conversaciÛn con el historial
-        var thread = new ChatHistoryAgentThread(chatHistory, request.ThreadId);
-
-        // 6. Invocar al agente y recopilar respuestas
-        var responses = agent.InvokeAsync(request.Question, thread);
-
-        var allResponses = new List<string>();
-        await foreach (var agentResponse in responses)
-        {
-            var content = agentResponse.Message.Content ?? string.Empty;
-            if (!string.IsNullOrWhiteSpace(content))
-            {
-                allResponses.Add(content);
-            }
-        }
-
-        // 7. Combinar todas las respuestas en un solo mensaje
-        var finalResponse = string.Join("\n\n", allResponses);
-
-        // 8. Guardar respuesta del asistente en la base de datos
-        await conversationService.AddMessageAsync(request.ThreadId, finalResponse, "assistant");
-
-        return Results.Ok(new
-        {
-            Message = finalResponse,
-            ConversationId = request.ThreadId,
-            ResponseCount = allResponses.Count
-        });
-    }
-    catch (Exception ex)
-    {
-        return Results.Problem($"Error processing request: {ex.Message}");
-    }
+    // ... Obtener historial desde base de datos
+    // ... Agregar mensaje del usuario actual
+    // ... Crear ChatHistoryAgentThread y lanzar la invocaci√≥n
 });
 ```
 
-**Flujo de procesamiento explicado:**
+### üìú C√≥mo se construye el historial
 
-1. **RecuperaciÛn del Contexto**: Se obtiene el historial completo de la conversaciÛn
-2. **Persistencia del Input**: El mensaje del usuario se guarda inmediatamente
-3. **ConstrucciÛn del Contexto**: Se recrea el historial para el agente
-4. **InvocaciÛn del Agente**: El agente procesa el mensaje con todo el contexto
-5. **Function Calling**: El agente puede llamar m˙ltiples funciones si es necesario
-6. **AgregaciÛn de Respuestas**: Se combinan todas las respuestas del agente
-7. **Persistencia del Output**: La respuesta final se guarda en la base de datos
-
-### 5. ConfiguraciÛn del Programa Principal
-
-#### 5.1 Program.cs
-
-La configuraciÛn principal del programa integra todos los servicios:
+El historial de conversaci√≥n se crea a partir de los mensajes previos almacenados en la base de datos:
 
 ```csharp
-var builder = WebApplication.CreateBuilder(args);
-
-// Agregar servicios al contenedor
-builder.Services.AddOpenApi();
-builder.Services.AddDatabase(builder.Configuration);
-builder.Services.AddApplicationServices();
-builder.Services.AddSemanticKernel(builder.Configuration);
-builder.Services.AddAgents();
-
-var app = builder.Build();
-
-// Inicializar base de datos y configurar pipeline
-await app.InitializeDatabaseAsync();
-
-if (app.Environment.IsDevelopment())
+var chatHistory = new ChatHistory();
+foreach (var dbMessage in conversation.Messages)
 {
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
-
-// Mapear endpoints de API
-app.MapAgentEndpoints();
-
-app.Run();
-```
-
-### 6. Casos de Uso y Ejemplos Pr·cticos
-
-#### 6.1 VerificaciÛn de Estado de Facturas
-
-**PeticiÛn del usuario:**
-```
-"øPuedes verificar el estado de pago de la factura INV-202412-0001?"
-```
-
-**Proceso interno:**
-1. El agente identifica que necesita verificar una factura
-2. Autom·ticamente llama a `VerifyPaymentAsync("INV-202412-0001")`
-3. El plugin consulta la base de datos
-4. Devuelve informaciÛn formateada con emojis
-
-**Respuesta del agente:**
-```
-?? **Factura: INV-202412-0001**
-?? Cliente: Juan PÈrez
-?? DescripciÛn: Servicios legales - Compraventa
-?? Monto: $1,500.00
-?? Fecha de vencimiento: 15/12/2024
-? Estado: Pagada
-?? Fecha de pago: 20/12/2024
-```
-
-#### 6.2 CreaciÛn de Facturas
-
-**PeticiÛn del usuario:**
-```
-"Crea una prefactura para juan.perez@email.com por servicios de registro de marca por $2,000 pesos"
-```
-
-**Proceso interno:**
-1. El agente extrae: email, descripciÛn, monto
-2. Llama a `CreateInvoiceDraftAsync("juan.perez@email.com", "servicios de registro de marca", 2000)`
-3. Se crea la factura en la base de datos
-
-#### 6.3 Consultas Complejas
-
-**PeticiÛn del usuario:**
-```
-"øQuÈ facturas est·n vencidas y cu·nto dinero representan en total?"
-```
-
-**Proceso interno:**
-1. El agente llama a `GetUnpaidInvoicesAsync()`
-2. Filtra las facturas vencidas
-3. Calcula el total autom·ticamente
-4. Presenta la informaciÛn de manera estructurada
-
-### 7. Testing y ValidaciÛn
-
-#### 7.1 Archivo de Testing HTTP
-
-El archivo `SemanticKernelLearning04.http` proporciona ejemplos completos de testing:
-
-```http
-### 1. Iniciar nueva conversaciÛn
-POST {{SemanticKernelLearning04_HostAddress}}/api/agent/start
-Content-Type: application/json
-
-### 2. Verificar estado de factura
-POST {{SemanticKernelLearning04_HostAddress}}/api/agent
-Content-Type: application/json
-
-{
-    "question": "øPuedes verificar el estado de pago de la factura INV-202412-0001?",
-    "threadId": "{{conversationId}}"
-}
-
-### 3. Crear nueva factura
-POST {{SemanticKernelLearning04_HostAddress}}/api/agent
-Content-Type: application/json
-
-{
-    "question": "Crea una prefactura para juan.perez@email.com por servicios de registro de marca por $2,000 pesos",
-    "threadId": "{{conversationId}}"
+    if (dbMessage.Role == "user")
+        chatHistory.AddUserMessage(dbMessage.Content);
+    else if (dbMessage.Role == "assistant")
+        chatHistory.AddAssistantMessage(dbMessage.Content);
 }
 ```
 
-#### 7.2 CaracterÌsticas Destacadas del Sistema
+Despu√©s se a√±ade el nuevo mensaje del usuario, y se encapsula todo en un `ChatHistoryAgentThread`, que es el tipo de contexto que entiende el agente:
 
-**Function Calling Inteligente:**
-- El agente decide autom·ticamente quÈ funciones llamar
-- No requiere sintaxis especÌfica del usuario
-- Maneja par·metros opcionales inteligentemente
+```csharp
+chatHistory.AddUserMessage(request.Question);
+var thread = new ChatHistoryAgentThread(chatHistory, request.ThreadId);
+```
 
-**Persistencia Completa:**
-- Todas las conversaciones se guardan en SQLite
-- El historial se mantiene entre sesiones
-- Contexto completo disponible para el agente
+### üß† Ejecutar al agente y procesar respuestas
 
-**Respuestas Visuales:**
-- Uso consistente de emojis para mejor UX
-- Formato estructurado y f·cil de leer
-- InformaciÛn clara y actionable
+El agente se invoca de forma as√≠ncrona usando `InvokeAsync`, lo que permite recibir m√∫ltiples respuestas si el modelo decide dividir su salida (especialmente √∫til cuando hay invocaci√≥n de funciones):
 
----
+```csharp
+var responses = agent.InvokeAsync(request.Question, thread);
 
-## ?? ConclusiÛn
+var allResponses = new List<string>();
+await foreach (var agentResponse in responses)
+{
+    var content = agentResponse.Message.Content ?? string.Empty;
+    if (!string.IsNullOrWhiteSpace(content))
+    {
+        allResponses.Add(content);
+    }
+}
+```
 
-Este tutorial demuestra cÛmo crear un sistema completo de inteligencia artificial conversacional que puede:
+Luego se combinan todas las respuestas en un solo mensaje y se guarda nuevamente en la base de datos:
 
-### ? Logros TÈcnicos Alcanzados
+```csharp
+var finalResponse = string.Join("\n\n", allResponses);
+await conversationService.AddMessageAsync(request.ThreadId, finalResponse, "assistant");
+```
 
-1. **IntegraciÛn Seamless**: Semantic Kernel se integra perfectamente con .NET 9 y Entity Framework Core
-2. **Function Calling Autom·tico**: El agente puede ejecutar operaciones de negocio complejas sin intervenciÛn manual
-3. **Persistencia Inteligente**: El historial de conversaciones permite contexto continuo y experiencias personalizadas
-4. **APIs REST Est·ndar**: F·cil integraciÛn con cualquier frontend o sistema externo
+### ‚úÖ Respuesta final
 
-### ?? Conceptos Clave Aprendidos
+El resultado es una experiencia completamente conversacional, persistente y con funciones automatizadas. El cliente (por ejemplo, una SPA en Blazor o React) solo necesita enviar preguntas con un `ConversationId` y mostrar las respuestas generadas.
 
-1. **Semantic Kernel Agents**: Los agentes conversacionales pueden manejar lÛgica de negocio compleja
-2. **Plugin Architecture**: Los plugins permiten extender las capacidades del agente de manera modular
-3. **Function Calling**: La IA puede invocar funciones autom·ticamente bas·ndose en el contexto
-4. **Dependency Injection**: IntegraciÛn perfecta con el ecosistema .NET para servicios y persistencia
-5. **Conversation Threading**: Mantenimiento de contexto a travÈs de m˙ltiples interacciones
+### üìå ¬øPor qu√© usar historial y contexto?
 
-### ?? PrÛximos Pasos y Extensiones
+Esto es clave para que el agente pueda entender preguntas como:
 
-Este sistema puede expandirse f·cilmente para incluir:
+> ‚Äú¬øY esa factura de Juan ya se pag√≥?‚Äù
 
-- **M˙ltiples Agentes**: Agentes especializados para diferentes dominios
-- **IntegraciÛn con Sistemas Externos**: APIs de facturaciÛn, CRM, sistemas contables
-- **An·lisis Avanzado**: Reportes autom·ticos y an·lisis de tendencias
-- **Notificaciones Inteligentes**: Alertas autom·ticas para facturas vencidas
-- **Interfaces de Usuario**: Chatbots web, aplicaciones mÛviles, integraciÛn con Teams
+Sin historial, el modelo no sabr√≠a a qu√© se refiere ‚Äúesa factura‚Äù. Al mantener contexto, el agente puede hacer inferencias y ejecutar funciones con mayor precisi√≥n.
 
-### ?? Valor del Enfoque
+Con esto, tenemos todo lo necesario para una experiencia de agente conversacional **real, persistente, funcional y extensible**.
 
-La combinaciÛn de **Semantic Kernel + Function Calling + Persistencia** crea un sistema que no solo entiende lenguaje natural, sino que puede actuar sobre Èl de manera inteligente y consistente. Esto abre posibilidades para automatizar procesos de negocio complejos manteniendo la flexibilidad de la interacciÛn humana natural.
 
-Este patrÛn es aplicable a cualquier dominio empresarial: gestiÛn de inventarios, atenciÛn al cliente, an·lisis financiero, recursos humanos, y mucho m·s. El cÛdigo presentado sirve como una base sÛlida para construir sistemas de IA empresariales robustos y escalables.
+> üìÅ **Nota:**  
+> Recuerda que el c√≥digo completo est√° disponible en el repositorio, incluyendo el contexto de la base de datos y la implementaci√≥n completa de `ConversationService`, que se encarga de crear conversaciones, almacenar mensajes y reconstruir el historial.
+> 
+> üîó [Ver el proyecto en GitHub](https://github.com/isaacOjeda/DevToPosts/tree/main/SemanticKernelSeries/SemanticKernelLearning04)
+
+## üß∞ Extras, buenas pr√°cticas y posibles extensiones
+
+Hasta este punto ya tienes un agente conversacional funcional, conectado a un modelo de lenguaje, con un plugin personalizado, y persistencia completa de las conversaciones. Sin embargo, el Agent Framework de Semantic Kernel ofrece muchas oportunidades para llevar tu soluci√≥n al siguiente nivel.
+
+A continuaci√≥n, te comparto algunas ideas para extender o mejorar tu asistente.
+
+### üîó Agentes con m√∫ltiples plugins
+
+El `Kernel` puede importar m√∫ltiples plugins, no solo uno. Por ejemplo, podr√≠as tener:
+
+- `InvoicesPlugin`: para gesti√≥n de facturas.
+- `CalendarPlugin`: para gestionar eventos o vencimientos.
+- `EmailPlugin`: para enviar notificaciones autom√°ticas.
+
+```csharp
+agentKernel.ImportPluginFromObject(new CalendarPlugin(...));
+agentKernel.ImportPluginFromObject(new EmailPlugin(...));
+```
+
+Esto permite que el mismo agente decida qu√© herramienta usar dependiendo del mensaje del usuario, sin que tengas que escribir l√≥gica adicional.
+
+### üß† Agentes que planifican m√∫ltiples pasos
+
+El Agent Framework incluye soporte experimental para **planificaci√≥n autom√°tica**, donde el modelo puede decidir ejecutar m√∫ltiples funciones encadenadas para lograr un objetivo complejo.
+
+Por ejemplo:
+
+> ‚ÄúCrea una prefactura para Carlos y m√°rcala como pagada.‚Äù
+
+Esto podr√≠a generar un plan con dos pasos: `CreateInvoiceDraftAsync` ‚Üí `MarkInvoiceAsPaidAsync`.  
+El agente puede manejar estas secuencias si se configura con `FunctionCalling` en modo `Auto()` y si las funciones est√°n bien descritas.
+
+### üß™ Testing y depuraci√≥n
+
+Cuando construyes agentes que llaman funciones reales, es importante:
+
+- Probar con mensajes ambiguos o incompletos para ver c√≥mo reacciona el agente.
+- Monitorear los logs de funciones invocadas.
+- Verificar qu√© par√°metros est√° eligiendo el modelo.
+- Utilizar `FunctionResult` para obtener metadata sobre las llamadas.
+
+Tambi√©n puedes capturar los mensajes generados por el modelo para analizarlos m√°s adelante, por ejemplo, almacenando las decisiones o planes generados en una tabla de auditor√≠a.
+
+### ‚ö†Ô∏è Cuida la experiencia conversacional
+
+Algunos consejos pr√°cticos para que el asistente se sienta m√°s natural:
+
+- Usa emojis y lenguaje cercano si el p√∫blico lo permite (como hicimos aqu√≠).
+- Aseg√∫rate de que las respuestas siempre incluyan lo esencial, incluso si no hay datos (ej: ‚Äúno hay facturas vencidas‚Äù).
+- Controla el tama√±o del historial para evitar prompts excesivamente largos.
+- Maneja errores con mensajes claros: si una factura no existe, si el email es inv√°lido, etc.
+
+### üß© Integraci√≥n con interfaces visuales
+
+Aunque este ejemplo se enfoca en la API HTTP y el backend del agente, la interacci√≥n no termina ah√≠. Puedes conectar este agente conversacional a diferentes interfaces gr√°ficas seg√∫n tu contexto:
+
+- Una aplicaci√≥n web (por ejemplo, Blazor, React, Angular).
+- Un chatbot embebido en tu intranet o sitio p√∫blico.
+- Clientes m√≥viles nativos.
+- Canales como Microsoft Teams, Telegram o WhatsApp.
+
+> üí¨ **Importante:**  
+> El repositorio del proyecto incluye un **chat funcional ya implementado** que se comunica con esta API y permite mantener conversaciones con el agente.  
+> Este cliente est√° disponible como referencia y punto de exploraci√≥n: puedes ver c√≥mo se estructuran los hilos, c√≥mo se muestra el historial y c√≥mo se consume el endpoint `/api/agent`.
+
+üîó [Ver el repositorio en GitHub](https://github.com/isaacOjeda/DevToPosts/tree/main/SemanticKernelSeries/SemanticKernelLearning04)
+
+Este ejemplo es ideal para experimentar con el flujo completo: desde el frontend que env√≠a preguntas, hasta el agente que responde y persiste el historial.
+
+### üå± ¬øQu√© m√°s podr√≠as construir con este enfoque?
+
+El Agent Framework es ideal para automatizar tareas repetitivas en sistemas internos. Algunos ejemplos reales donde este enfoque encaja:
+
+- Asistentes de soporte t√©cnico interno (consultar errores, reiniciar servicios).
+- Asistentes legales que redactan contratos o extraen cl√°usulas.
+- Agentes que combinan datos de distintas fuentes (facturas + clientes + CRM).
+- Robots de backoffice que ayudan a generar informes o consolidar informaci√≥n.
+
+> üìå **Consejo final:**  
+> Piensa en tu agente como un _colega digital_: cuantas m√°s herramientas le des, m√°s tareas podr√° resolver sin que t√∫ tengas que intervenir manualmente.
+
+
+## ‚úÖ Conclusi√≥n
+
+El **Agent Framework de Semantic Kernel** abre una puerta poderosa para construir aplicaciones inteligentes que combinan lenguaje natural con l√≥gica de negocio real. En este art√≠culo, creamos un **agente conversacional especializado en facturaci√≥n**, capaz de razonar sobre peticiones del usuario e invocar funciones de una aplicaci√≥n en .NET.
+
+Hemos visto c√≥mo:
+
+- Configurar un `Kernel` con Azure OpenAI.
+- Exponer funciones reales como plugins usando `[KernelFunction]`.
+- Construir y personalizar un agente con instrucciones espec√≠ficas.
+- Mantener conversaciones persistentes con historial contextual.
+- Integrar todo en una API funcional, lista para usarse desde un cliente.
+
+Este enfoque es aplicable a much√≠simos casos reales: desde automatizaci√≥n interna hasta asistentes legales, t√©cnicos o administrativos.
+
+> üí° Lo mejor de todo es que puedes extender esta base f√°cilmente: agregar nuevos plugins, integrar fuentes de datos adicionales, o escalar hacia canales como webchat, Teams o bots en producci√≥n.
+
+Si te interesa explorar m√°s sobre c√≥mo usar Semantic Kernel en escenarios del mundo real, o quieres construir asistentes m√°s sofisticados, este es apenas el comienzo.
+
+üîó **Recuerda que el c√≥digo completo est√° disponible aqu√≠:**  
+[github.com/isaacOjeda/DevToPosts/tree/main/SemanticKernelSeries/SemanticKernelLearning04](https://github.com/isaacOjeda/DevToPosts/tree/main/SemanticKernelSeries/SemanticKernelLearning04)
+
+## üìö Referencias
+
+Si quieres seguir explorando el Agent Framework de Semantic Kernel y todas sus posibilidades en C#, aqu√≠ tienes enlaces oficiales de documentaci√≥n que complementan lo visto en este art√≠culo:
+
+- [Semantic Kernel Agent Framework | Microsoft Learn](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/?pivots=programming-language-csharp)
+- [Semantic Kernel Agent Architecture | Microsoft Learn](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-architecture?pivots=programming-language-csharp)
+- [The Semantic Kernel Common Agent API surface | Microsoft Learn](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-api?pivots=programming-language-csharp)
+- [Configuring Agents with Semantic Kernel Plugins. | Microsoft Learn](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-functions?pivots=programming-language-csharp)
+- [Exploring the Semantic Kernel ChatCompletionAgent | Microsoft Learn](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-types/chat-completion-agent?pivots=programming-language-csharp)
+- [Develop AI Agents on Azure - Training | Microsoft Learn](https://learn.microsoft.com/en-us/training/paths/develop-ai-agents-on-azure/?source=learn)
