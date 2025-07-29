@@ -1,0 +1,435 @@
+### Advanced Authorization API - Testing
+
+@baseUrl = http://localhost:5090
+@contentType = application/json
+
+# Variables para tokens (se actualizan después de hacer login)
+@userToken = 
+@managerToken = 
+@adminToken = 
+@superAdminToken = 
+@auditorToken = 
+@itAdminToken = 
+
+### 1. Get API Root Information
+GET {{baseUrl}}/
+Accept: {{contentType}}
+
+### 2. Get Test Users Information (para ver credenciales disponibles)
+GET {{baseUrl}}/auth/test-users
+Accept: {{contentType}}
+
+### 3. Login como Admin
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+### 4. Login como Manager
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "manager",
+  "password": "manager123"
+}
+
+### 5. Login como User
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "user",
+  "password": "user123"
+}
+
+### 6. Login como Auditor
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "auditor",
+  "password": "auditor123"
+}
+
+### 7. Login como IT Admin
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "itadmin",
+  "password": "itadmin123"
+}
+
+### 8. Login como SuperAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "superadmin",
+  "password": "super123"
+}
+
+###
+### ==== LOGINS PARA OBTENER TOKENS DE PRUEBA ====
+### Ejecuta estos logins y copia los tokens a las variables de arriba
+###
+
+### 9A. Login User (copia el token a @userToken)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "user",
+  "password": "user123"
+}
+
+### 9B. Login Manager (copia el token a @managerToken)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "manager",
+  "password": "manager123"
+}
+
+### 9C. Login Admin (copia el token a @adminToken)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+### 9D. Login SuperAdmin (copia el token a @superAdminToken)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "superadmin",
+  "password": "super123"
+}
+
+### 9E. Login Auditor (copia el token a @auditorToken)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "auditor",
+  "password": "auditor123"
+}
+
+###
+### ==== PRUEBAS BÁSICAS DE AUTENTICACIÓN ====
+###
+
+### 10. Login con credenciales inválidas (debe fallar)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "invalid",
+  "password": "invalid"
+}
+
+### 11. Get Current User (requiere token)
+# Primero hacer login y copiar el token
+GET {{baseUrl}}/auth/me
+Authorization: Bearer YOUR_TOKEN_HERE
+Accept: {{contentType}}
+
+### 12. Refresh Token (requiere token)
+# Primero hacer login y copiar el token
+POST {{baseUrl}}/auth/refresh
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: {{contentType}}
+
+### 13. Access sin token (debe fallar)
+GET {{baseUrl}}/auth/me
+Accept: {{contentType}}
+
+### 14. Test OpenAPI endpoint
+GET {{baseUrl}}/openapi/v1.json
+Accept: application/json
+
+###
+### ==== PRUEBAS DE AUTORIZACIÓN POR ROLES ====
+###
+
+### 15. Pruebas de autorización jerárquica - Dashboard (User token)
+GET {{baseUrl}}/role-based/dashboard
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+### 16. Pruebas de autorización jerárquica - Manager info (Manager token)
+GET {{baseUrl}}/role-based/management/team-info
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+### 17. Pruebas de autorización jerárquica - Admin settings (Admin token)
+GET {{baseUrl}}/role-based/admin/system-info
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+### 18. Pruebas de autorización jerárquica - SuperAdmin logs (SuperAdmin token)
+GET {{baseUrl}}/role-based/superadmin/system-logs
+Accept: {{contentType}}
+Authorization: Bearer {{superAdminToken}}
+
+### 19. Pruebas de autorización jerárquica - Management data (Manager/Admin/SuperAdmin)
+GET {{baseUrl}}/role-based/management-data
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+### 20. Intentar acceso Admin con token User (debe fallar)
+GET {{baseUrl}}/role-based/admin/system-info
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+###
+### ==== PRUEBAS DE ROLES SIMPLES (EXACTOS) ====
+###
+
+### 21. User only endpoint (Solo User)
+GET {{baseUrl}}/simple-roles/user-only
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+### 22. Manager only endpoint (Solo Manager)
+GET {{baseUrl}}/simple-roles/manager-only
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+### 23. Admin only endpoint (Solo Admin)
+GET {{baseUrl}}/simple-roles/admin-only
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+### 24. SuperAdmin only endpoint (Solo SuperAdmin)
+GET {{baseUrl}}/simple-roles/superadmin-only
+Accept: {{contentType}}
+Authorization: Bearer {{superAdminToken}}
+
+### 25. Auditor only endpoint (Solo Auditor)
+GET {{baseUrl}}/simple-roles/auditor-only
+Accept: {{contentType}}
+Authorization: Bearer {{auditorToken}}
+
+### 26. Comparación de roles (todos los usuarios)
+GET {{baseUrl}}/simple-roles/role-comparison
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+### 27. Acceso condicional - User
+GET {{baseUrl}}/simple-roles/conditional-access
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+### 28. Acceso condicional - Manager
+GET {{baseUrl}}/simple-roles/conditional-access
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+### 29. Acceso condicional - Admin
+GET {{baseUrl}}/simple-roles/conditional-access
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+### 30. Intentar acceso Manager-only con token User (debe fallar)
+GET {{baseUrl}}/simple-roles/manager-only
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+### 31. Intentar acceso Admin-only con token Manager (debe fallar)
+GET {{baseUrl}}/simple-roles/admin-only
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+###
+### ==== PRUEBAS DE AUTORIZACIÓN BASADA EN CLAIMS ====
+###
+
+### 32. Claims - Lectura de usuarios (requiere permission:users.read)
+GET {{baseUrl}}/claims-based/users/read
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+### 33. Claims - Crear usuario (requiere permission:users.write)
+POST {{baseUrl}}/claims-based/users/create
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+### 34. Claims - Eliminar usuario (requiere permission:users.delete)
+DELETE {{baseUrl}}/claims-based/users/delete
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+### 35. Claims - Generar reportes (requiere permission:reports.read)
+GET {{baseUrl}}/claims-based/reports/generate
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+### 36. Claims - Datos sensibles (requiere permission:admin.access)
+GET {{baseUrl}}/claims-based/admin/sensitive-data
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+### 37. Claims - Operación crítica (requiere admin.access Y system.write)
+POST {{baseUrl}}/claims-based/admin/critical-operation
+Accept: {{contentType}}
+Authorization: Bearer {{superAdminToken}}
+
+### 38. Claims - Lectura con OR lógico (users.read O reports.read O admin.access)
+GET {{baseUrl}}/claims-based/data/read-any
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+### 39. Claims - Análisis completo de claims
+GET {{baseUrl}}/claims-based/claims/analysis
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+### 40. Claims - Validación condicional
+GET {{baseUrl}}/claims-based/conditional-claims
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+### 41. Claims - Autorización híbrida (rol Manager + claim users.read)
+GET {{baseUrl}}/claims-based/hybrid/role-and-claims
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+### 42. Claims - Intentar acceso sin permiso (User sin admin.access, debe fallar)
+GET {{baseUrl}}/claims-based/admin/sensitive-data
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+### 43. Claims - Intentar operación crítica sin permisos (Manager sin system.write, debe fallar)
+POST {{baseUrl}}/claims-based/admin/critical-operation
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+### 44. Claims - Análisis con diferentes roles
+GET {{baseUrl}}/claims-based/claims/analysis
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+### 45. Claims - Análisis con Auditor
+GET {{baseUrl}}/claims-based/claims/analysis
+Accept: {{contentType}}
+Authorization: Bearer {{auditorToken}}
+
+###
+
+# ===================================================
+# FASE 6: CUSTOM AUTHORIZATION REQUIREMENTS & HANDLERS
+# ===================================================
+
+### 46. Custom - Permission-Based Authorization - Admin Permission
+GET {{baseUrl}}/custom-auth/permission-admin
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 47. Custom - Permission-Based Authorization - Manager Permission (should fail for admin)
+GET {{baseUrl}}/custom-auth/permission-manager
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 48. Custom - Permission-Based Authorization - Manager Permission (should succeed)
+GET {{baseUrl}}/custom-auth/permission-manager
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+###
+
+### 49. Custom - Multiple Permissions (Admin OR Manager) - with Admin
+GET {{baseUrl}}/custom-auth/multiple-permissions
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 50. Custom - Multiple Permissions (Admin OR Manager) - with Manager
+GET {{baseUrl}}/custom-auth/multiple-permissions
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+###
+
+### 51. Custom - Multiple Permissions (Admin OR Manager) - with User (should fail)
+GET {{baseUrl}}/custom-auth/multiple-permissions
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+###
+
+### 52. Custom - Time-Based Authorization (Only 9 AM - 5 PM) - Business hours test
+GET {{baseUrl}}/custom-auth/business-hours
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 53. Custom - Hybrid Authorization (Admin + CanRead permission)
+GET {{baseUrl}}/custom-auth/hybrid-admin-read
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 54. Custom - Hybrid Authorization (Manager + CanWrite permission) - should fail for Manager
+GET {{baseUrl}}/custom-auth/hybrid-manager-write
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+###
+
+### 55. Custom - Conditional Authorization (Premium users only) - usando Manager como Premium
+GET {{baseUrl}}/custom-auth/conditional-premium
+Accept: {{contentType}}
+Authorization: Bearer {{managerToken}}
+
+###
+
+### 56. Custom - Conditional Authorization (Premium users only) - should fail for regular user
+GET {{baseUrl}}/custom-auth/conditional-premium
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+###
+
+### 57. Custom - Complex Authorization (Hybrid + Time + Premium)
+GET {{baseUrl}}/custom-auth/complex-authorization
+Accept: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 58. Custom - Complex Authorization with User (should fail - not premium)
+GET {{baseUrl}}/custom-auth/complex-authorization
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+###
+
+### 59. Custom - Testing Permission System - IT Admin Permission (has Developer-like permissions)
+GET {{baseUrl}}/custom-auth/permission-developer
+Accept: {{contentType}}
+Authorization: Bearer {{itAdminToken}}
+
+###
+
+### 60. Custom - Testing Permission System - User trying Developer Permission (should fail)
+GET {{baseUrl}}/custom-auth/permission-developer
+Accept: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+###
