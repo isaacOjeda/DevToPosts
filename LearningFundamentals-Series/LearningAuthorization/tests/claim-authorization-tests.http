@@ -1,0 +1,39 @@
+@baseUrl = http://localhost:5254
+@contentType = application/json
+
+# Variables para tokens (se actualizan después de hacer login)
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3IiwidW5pcXVlX25hbWUiOiJocl91c2VyIiwiZW1haWwiOiJocl91c2VyQGV4YW1wbGUuY29tIiwidXNlcl9pZCI6IjciLCJmdWxsX25hbWUiOiJIUiBVc2VyIiwiaXNfYWN0aXZlIjoiVHJ1ZSIsInJvbGUiOiJVc2VyIiwiZGVwYXJ0bWVudCI6IkhSIiwicGVybWlzc2lvbnMiOlsidXNlcnNyZWFkIiwicmVwb3J0c3JlYWQiXSwibmJmIjoxNzUzODAwODU5LCJleHAiOjE3NTM4MDQ0NTksImlhdCI6MTc1MzgwMDg1OSwiaXNzIjoiQWR2YW5jZWRBdXRob3JpemF0aW9uQVBJIiwiYXVkIjoiQWR2YW5jZWRBdXRob3JpemF0aW9uQ2xpZW50cyJ9.mSiYiIYoz6HlnaqPYUQNzlE_U0BXhfE2I_2vT4W37m4
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIzIiwidW5pcXVlX25hbWUiOiJ1c2VyIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwidXNlcl9pZCI6IjMiLCJmdWxsX25hbWUiOiJSZWd1bGFyIFVzZXIiLCJpc19hY3RpdmUiOiJUcnVlIiwicm9sZSI6IlVzZXIiLCJkZXBhcnRtZW50IjoiU2FsZXMiLCJwZXJtaXNzaW9ucyI6WyJ1c2Vyc3JlYWQiLCJyZXBvcnRzcmVhZCJdLCJuYmYiOjE3NTM4MDA5NDgsImV4cCI6MTc1MzgwNDU0OCwiaWF0IjoxNzUzODAwOTQ4LCJpc3MiOiJBZHZhbmNlZEF1dGhvcml6YXRpb25BUEkiLCJhdWQiOiJBZHZhbmNlZEF1dGhvcml6YXRpb25DbGllbnRzIn0._WuR-W8j0XDb1GMKdEP5yJWGnKDmVy_UEe6929PG9Ow
+
+### Get Test Users Information (para ver credenciales disponibles)
+GET {{baseUrl}}/auth/test-users
+Accept: {{contentType}}
+
+### Login Normal User
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "user",
+  "password": "user123"
+}
+
+### Login HR
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "hr_user",
+  "password": "hr_user123"
+}
+
+### Get Current User (requiere token)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+Accept: {{contentType}}
+
+
+### Get Users (requiere departamento HR)
+GET {{baseUrl}}/claims-based/users/read
+Authorization: Bearer {{token}}
+Accept: {{contentType}}

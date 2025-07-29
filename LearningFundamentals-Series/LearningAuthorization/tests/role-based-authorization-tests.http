@@ -1,0 +1,44 @@
+@baseUrl = http://localhost:5254
+@contentType = application/json
+
+# Variables para tokens (se actualizan después de hacer login)
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwidW5pcXVlX25hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJ1c2VyX2lkIjoiMSIsImZ1bGxfbmFtZSI6IkFkbWluaXN0cmF0b3IiLCJpc19hY3RpdmUiOiJUcnVlIiwicm9sZSI6IlN1cGVyQWRtaW4iLCJkZXBhcnRtZW50IjoiSVQiLCJwZXJtaXNzaW9ucyI6WyJ1c2Vyc3JlYWQiLCJ1c2Vyc3dyaXRlIiwidXNlcnNkZWxldGUiLCJyZXBvcnRzcmVhZCIsInJlcG9ydHN3cml0ZSIsInJlcG9ydHNkZWxldGUiLCJhZG1pbmFjY2VzcyIsImFkbWluc2V0dGluZ3MiLCJyb2xlc3JlYWQiLCJyb2xlc3dyaXRlIiwicm9sZXNkZWxldGUiLCJhdWRpdHJlYWQiLCJhdWRpdHdyaXRlIiwic3lzdGVtY29uZmlncmVhZCIsInN5c3RlbWNvbmZpZ3dyaXRlIl0sIm5iZiI6MTc1MzgwMTI0NiwiZXhwIjoxNzUzODA0ODQ2LCJpYXQiOjE3NTM4MDEyNDYsImlzcyI6IkFkdmFuY2VkQXV0aG9yaXphdGlvbkFQSSIsImF1ZCI6IkFkdmFuY2VkQXV0aG9yaXphdGlvbkNsaWVudHMifQ.1QtKSMgLf1WpZHgcyHiam0RqcYmUOXkZbkarVpIok8k
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIzIiwidW5pcXVlX25hbWUiOiJ1c2VyIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwidXNlcl9pZCI6IjMiLCJmdWxsX25hbWUiOiJSZWd1bGFyIFVzZXIiLCJpc19hY3RpdmUiOiJUcnVlIiwicm9sZSI6IlVzZXIiLCJkZXBhcnRtZW50IjoiU2FsZXMiLCJwZXJtaXNzaW9ucyI6WyJ1c2Vyc3JlYWQiLCJyZXBvcnRzcmVhZCJdLCJuYmYiOjE3NTM4MDEyNTYsImV4cCI6MTc1MzgwNDg1NiwiaWF0IjoxNzUzODAxMjU2LCJpc3MiOiJBZHZhbmNlZEF1dGhvcml6YXRpb25BUEkiLCJhdWQiOiJBZHZhbmNlZEF1dGhvcml6YXRpb25DbGllbnRzIn0.PAIqoBZhRrsW3ZItl5aZDVNKJWRvUARETtsB5mNl1dU
+
+### Get Test Users Information (para ver credenciales disponibles)
+GET {{baseUrl}}/auth/test-users
+Accept: {{contentType}}
+
+### Login Normal User
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "user",
+  "password": "user123"
+}
+
+### Login Admin
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+
+### Get User Profile (Normal User)
+GET {{baseUrl}}/role-based/user/profile
+Authorization: Bearer {{userToken}}
+Accept: {{contentType}}
+
+### Get System Info (Admin User)
+GET {{baseUrl}}/role-based/admin/system
+Authorization: Bearer {{adminToken}}
+Accept: {{contentType}}
+
+### Get System Info (Normal User)
+GET {{baseUrl}}/role-based/admin/system
+Authorization: Bearer {{userToken}}
+Accept: {{contentType}}
