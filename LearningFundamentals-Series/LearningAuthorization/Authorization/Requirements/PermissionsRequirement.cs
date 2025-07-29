@@ -5,7 +5,7 @@ namespace AdvancedAuthorization.Authorization.Requirements;
 /// <summary>
 /// Requirement que valida múltiples permisos (todos requeridos - AND lógico)
 /// </summary>
-public class MultiplePermissionsRequirement : IAuthorizationRequirement
+public class PermissionsRequirement : IAuthorizationRequirement
 {
     /// <summary>
     /// Los permisos requeridos (todos deben estar presentes)
@@ -16,7 +16,7 @@ public class MultiplePermissionsRequirement : IAuthorizationRequirement
     /// Constructor del requirement
     /// </summary>
     /// <param name="permissions">Los permisos que se requieren (todos)</param>
-    public MultiplePermissionsRequirement(params string[] permissions)
+    public PermissionsRequirement(params string[] permissions)
     {
         if (permissions == null || permissions.Length == 0)
             throw new ArgumentException("Se requiere al menos un permiso", nameof(permissions));

@@ -44,7 +44,7 @@ public static class PermissionExtensions
     /// </summary>
     public static string ToClaimValue(this Permission permission)
     {
-        return permission.ToString().ToLowerInvariant();
+        return permission.GetInvariantName();
     }
 
     /// <summary>
@@ -70,6 +70,29 @@ public static class PermissionExtensions
             Permission.SystemConfigRead => "Leer configuración del sistema",
             Permission.SystemConfigWrite => "Modificar configuración del sistema",
             _ => permission.ToString()
+        };
+    }
+
+    public static string GetInvariantName(this Permission permission)
+    {
+        return permission switch
+        {
+            Permission.UsersRead => "users.read",
+            Permission.UsersWrite => "users.write",
+            Permission.UsersDelete => "users.delete",
+            Permission.ReportsRead => "reports.read",
+            Permission.ReportsWrite => "reports.write",
+            Permission.ReportsDelete => "reports.delete",
+            Permission.AdminAccess => "admin.access",
+            Permission.AdminSettings => "admin.settings",
+            Permission.RolesRead => "roles.read",
+            Permission.RolesWrite => "roles.write",
+            Permission.RolesDelete => "roles.delete",
+            Permission.AuditRead => "audit.read",
+            Permission.AuditWrite => "audit.write",
+            Permission.SystemConfigRead => "system.config.read",
+            Permission.SystemConfigWrite => "system.config.write",
+            _ => permission.ToString().ToLowerInvariant()
         };
     }
 }

@@ -1,0 +1,48 @@
+@baseUrl = http://localhost:5254
+@contentType = application/json
+
+# Variables para tokens (se actualizan después de hacer login)
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIzIiwidW5pcXVlX25hbWUiOiJ1c2VyIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwidXNlcl9pZCI6IjMiLCJmdWxsX25hbWUiOiJSZWd1bGFyIFVzZXIiLCJpc19hY3RpdmUiOiJUcnVlIiwicm9sZSI6IlVzZXIiLCJkZXBhcnRtZW50IjoiU2FsZXMiLCJwZXJtaXNzaW9ucyI6WyJ1c2Vycy5yZWFkIiwicmVwb3J0cy5yZWFkIl0sIm5iZiI6MTc1MzgwNDAyNCwiZXhwIjoxNzUzODA3NjI0LCJpYXQiOjE3NTM4MDQwMjQsImlzcyI6IkFkdmFuY2VkQXV0aG9yaXphdGlvbkFQSSIsImF1ZCI6IkFkdmFuY2VkQXV0aG9yaXphdGlvbkNsaWVudHMifQ.MdD1Ezre-OdQUUXUYueeN1JIL7qHeaXhUNNyae4lYMA
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwidW5pcXVlX25hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJ1c2VyX2lkIjoiMSIsImZ1bGxfbmFtZSI6IkFkbWluaXN0cmF0b3IiLCJpc19hY3RpdmUiOiJUcnVlIiwicm9sZSI6IlN1cGVyQWRtaW4iLCJkZXBhcnRtZW50IjoiSVQiLCJwZXJtaXNzaW9ucyI6WyJ1c2Vycy5yZWFkIiwidXNlcnMud3JpdGUiLCJ1c2Vycy5kZWxldGUiLCJyZXBvcnRzLnJlYWQiLCJyZXBvcnRzLndyaXRlIiwicmVwb3J0cy5kZWxldGUiLCJhZG1pbi5hY2Nlc3MiLCJhZG1pbi5zZXR0aW5ncyIsInJvbGVzLnJlYWQiLCJyb2xlcy53cml0ZSIsInJvbGVzLmRlbGV0ZSIsImF1ZGl0LnJlYWQiLCJhdWRpdC53cml0ZSIsInN5c3RlbS5jb25maWcucmVhZCIsInN5c3RlbS5jb25maWcud3JpdGUiXSwibmJmIjoxNzUzODA0MDM0LCJleHAiOjE3NTM4MDc2MzQsImlhdCI6MTc1MzgwNDAzNCwiaXNzIjoiQWR2YW5jZWRBdXRob3JpemF0aW9uQVBJIiwiYXVkIjoiQWR2YW5jZWRBdXRob3JpemF0aW9uQ2xpZW50cyJ9.f0gX2Nrt2tHj8nZcDBSrOIuSiSkffRP6n_NIs9pvwLo
+@permission = audit.write
+
+### Login Normal User
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "user",
+  "password": "user123"
+}
+
+### Login Admin
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+
+### Get Current User (requiere token)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{adminToken}}
+Accept: {{contentType}}
+
+
+### Test Permission
+GET {{baseUrl}}/custom-auth/permission/{{permission}}
+Authorization: Bearer {{userToken}}
+Content-Type: {{contentType}}
+
+
+### Admin Access Permission
+GET {{baseUrl}}/custom-auth/admin-access
+Authorization: Bearer {{adminToken}}
+Content-Type: {{contentType}}
+
+### Department Access Permission
+GET {{baseUrl}}/custom-auth/department-access
+Authorization: Bearer {{userToken}}
+Content-Type: {{contentType}}

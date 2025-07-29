@@ -20,20 +20,11 @@ public class PolicyBuilder : IPolicyBuilder
     }
 
     /// <summary>
-    /// Requiere un permiso específico
-    /// </summary>
-    public IPolicyBuilder RequirePermission(string permission)
-    {
-        _policyBuilder.AddRequirements(new PermissionRequirement(permission));
-        return this;
-    }
-
-    /// <summary>
     /// Requiere múltiples permisos (todos)
     /// </summary>
     public IPolicyBuilder RequireAllPermissions(params string[] permissions)
     {
-        _policyBuilder.AddRequirements(new MultiplePermissionsRequirement(permissions));
+        _policyBuilder.AddRequirements(new PermissionsRequirement(permissions));
         return this;
     }
 
@@ -109,10 +100,10 @@ public static class PolicyBuilderExtensions
     /// <summary>
     /// Política para acceso básico con un permiso
     /// </summary>
-    public static AuthorizationPolicy BasicPermissionPolicy(string permission)
+    public static AuthorizationPolicy PermissionPolicy(string permission)
     {
         return NewPolicy()
-            .RequirePermission(permission)
+            .RequireAllPermissions(permission)
             .Build();
     }
 
@@ -123,8 +114,8 @@ public static class PolicyBuilderExtensions
     {
         return NewPolicy()
             .RequireRoleWithPermissions(
-                roles: new[] { "Admin", "SuperAdmin" },
-                permissions: new[] { "adminaccess" })
+                roles: ["Admin", "SuperAdmin"],
+                permissions: ["adminaccess"])
             .Build();
     }
 
@@ -173,8 +164,8 @@ public static class PolicyBuilderExtensions
     {
         return NewPolicy()
             .RequireRoleWithPermissions(
-                roles: new[] { "Manager", "Admin", "SuperAdmin" },
-                permissions: new[] { "usersread" })
+                roles: ["Manager", "Admin", "SuperAdmin"],
+                permissions: ["usersread"])
             .RequireDepartment("IT", "HR", "Management")
             .RequireWorkingHours(new TimeSpan(7, 0, 0), new TimeSpan(19, 0, 0))
             .Build();
@@ -196,4 +187,48 @@ public static class PolicyBuilderExtensions
             })
             .Build();
     }
+}
+
+
+
+/// <summary>
+/// Servicio para construir políticas de autorización de forma fluida
+/// </summary>
+public interface IPolicyBuilder
+{
+
+    /// <summary>
+    /// Requiere múltiples permisos (todos)
+    /// </summary>
+    IPolicyBuilder RequireAllPermissions(params string[] permissions);
+
+    /// <summary>
+    /// Requiere cualquiera de los permisos especificados
+    /// </summary>
+    IPolicyBuilder RequireAnyPermission(params string[] permissions);
+
+    /// <summary>
+    /// Requiere un rol específico con permisos
+    /// </summary>
+    IPolicyBuilder RequireRoleWithPermissions(string[] roles, string[] permissions);
+
+    /// <summary>
+    /// Requiere horario laboral
+    /// </summary>
+    IPolicyBuilder RequireWorkingHours(TimeSpan startTime, TimeSpan endTime, bool allowAdminBypass = true);
+
+    /// <summary>
+    /// Requiere departamento específico
+    /// </summary>
+    IPolicyBuilder RequireDepartment(params string[] departments);
+
+    /// <summary>
+    /// Requiere acceso condicional
+    /// </summary>
+    IPolicyBuilder RequireConditionalAccess(Action<ConditionalAccessConditions> configure);
+
+    /// <summary>
+    /// Construye la política de autorización
+    /// </summary>
+    AuthorizationPolicy Build();
 }

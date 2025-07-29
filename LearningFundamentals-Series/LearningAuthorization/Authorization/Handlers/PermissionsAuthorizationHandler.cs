@@ -6,14 +6,14 @@ namespace AdvancedAuthorization.Authorization.Handlers;
 /// <summary>
 /// Handler para validar múltiples permisos (todos requeridos)
 /// </summary>
-public class MultiplePermissionsAuthorizationHandler : AuthorizationHandler<MultiplePermissionsRequirement>
+public class PermissionsAuthorizationHandler : AuthorizationHandler<PermissionsRequirement>
 {
     /// <summary>
     /// Maneja la validación del requirement
     /// </summary>
     protected override Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
-        MultiplePermissionsRequirement requirement)
+        PermissionsRequirement requirement)
     {
         // Obtener todos los permisos del usuario
         var userPermissions = context.User.FindAll("permissions").Select(c => c.Value).ToHashSet();

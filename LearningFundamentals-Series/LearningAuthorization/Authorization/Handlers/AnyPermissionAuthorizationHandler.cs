@@ -19,7 +19,7 @@ public class AnyPermissionAuthorizationHandler : AuthorizationHandler<AnyPermiss
         var userPermissions = context.User.FindAll("permissions").Select(c => c.Value).ToHashSet();
 
         // Verificar que el usuario tenga AL MENOS UNO de los permisos requeridos
-        bool hasAnyPermission = requirement.Permissions.Any(permission => userPermissions.Contains(permission));
+        bool hasAnyPermission = requirement.Permissions.Any(userPermissions.Contains);
 
         if (hasAnyPermission)
         {

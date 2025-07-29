@@ -16,8 +16,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPolicyBuilder, PolicyBuilder>();
 
-builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, MultiplePermissionsAuthorizationHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, PermissionsAuthorizationHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, AnyPermissionAuthorizationHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, RoleWithPermissionAuthorizationHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, WorkingHoursAuthorizationHandler>();
@@ -59,6 +58,7 @@ app.UseAuthorization();
 app.MapAuthEndpoints();
 app.MapClaimsBasedEndpoints();
 app.MapRoleBasedEndpoints();
+app.MapCustomAuthorizationEndpoints();
 
 app.Run();
 
