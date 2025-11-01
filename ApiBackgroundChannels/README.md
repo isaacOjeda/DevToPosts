@@ -1,4 +1,4 @@
-## 📖 Introducción
+## Introducción
 
 En el desarrollo moderno de aplicaciones, es común necesitar ejecutar **procesos en segundo plano** que se comuniquen con nuestra API de forma eficiente y segura. Tradicionalmente, esto se resolvía con implementaciones complejas usando locks, colas manuales o infraestructura externa como RabbitMQ. Sin embargo, .NET ofrece una solución simple pero elegante: **System.Threading.Channels**.
 
@@ -11,6 +11,7 @@ En este artículo, exploraremos cómo construir un sistema de control de jobs en
 Al finalizar, tendrás un proyecto funcional que puedes adaptar para casos de uso reales como procesamiento de emails, análisis de imágenes, generación de reportes, y más.
 
 > Nota: El código fuente siempre lo encontrarás en mi github -> [DevToPosts/ApiBackgroundChannels at main · isaacOjeda/DevToPosts](https://github.com/isaacOjeda/DevToPosts/tree/main/ApiBackgroundChannels)
+
 ## ¿Qué son los Channels?
 
 Los **Channels** en .NET son estructuras de datos thread-safe diseñadas para escenarios **productor-consumidor**. Piensa en ellos como una "tubería" donde un lado escribe datos y el otro los lee, sin preocuparte por locks o sincronización manual.
@@ -284,14 +285,14 @@ Channel<ProcessedData> outputChannel;
 
 ## Ventajas vs Alternativas
 
-| Escenario | Channel | Queue Externo | BlockingCollection |
-|-----------|---------|---------------|-------------------|
-| Performance | ⚡ Muy alta | 🐢 Red overhead | ✅ Alta |
-| Configuración | ✅ Cero | ❌ Infraestructura | ✅ Mínima |
-| Backpressure | ✅ Integrado | ⚠️ Manual | ⚠️ Manual |
-| Async/Await | ✅ Nativo (ValueTask) | ⚠️ Depende | ❌ Bloquea threads |
-| Escalabilidad | 🏠 Single-app | 🌍 Multi-app | 🏠 Single-app |
-| Memoria | ✅ Bounded options | ⚠️ Depende | ⚠️ Manual |
+| Escenario     | Channel              | Queue Externo     |
+| ------------- | -------------------- | ----------------- |
+| Performance   | ⚡ Muy alta           | 🐢 Red overhead   |
+| Configuración | ✅ Cero               | ❌ Infraestructura |
+| Backpressure  | ✅ Integrado          | ⚠️ Manual         |
+| Async/Await   | ✅ Nativo (ValueTask) | ⚠️ Depende        |
+| Escalabilidad | 🏠 Single-app        | 🌍 Multi-app      |
+| Memoria       | ✅ Bounded options    | ⚠️ Depende        |
 
 **Usa Channels cuando:**
 - ✅ Comunicación dentro de la misma aplicación
@@ -306,64 +307,6 @@ Channel<ProcessedData> outputChannel;
 - ❌ Necesitas escalabilidad horizontal
 - ❌ Requieres garantías de entrega (at-least-once, exactly-once)
 
-## ⚡ Mejores Prácticas de Microsoft Learn
-
-### 1. **Consumer Pattern **
-```csharp
-// ✅ WaitToReadAsync + TryRead (más eficiente)
-while (await reader.WaitToReadAsync(cancellationToken))
-{
-    while (reader.TryRead(out var item))
-    {
-        // Procesar item
-    }
-}
-
-// ❌ ReadAllAsync (menos eficiente para alta carga)
-await foreach (var item in reader.ReadAllAsync(cancellationToken))
-{
-    // Procesar item
-}
-```
-
-### 2. **Producer Pattern**
-```csharp
-// ✅ WriteAsync para backpressure automático
-await writer.WriteAsync(item, cancellationToken);
-
-// ⚠️ TryWrite solo para unbounded o cuando no quieres esperar
-if (!writer.TryWrite(item))
-{
-    // Channel lleno, manejar alternativa
-}
-```
-
-### 3. **Signal Completion**
-```csharp
-// ✅ Siempre señalar cuando terminas de escribir (esto cierra el canal)
-writer.Complete();
-
-// O con error
-writer.Complete(exception);
-```
-
-### 4. **Manejo de Errores**
-```csharp
-try
-{
-    await ProcessCommand(command);
-}
-catch (Exception ex)
-{
-    _logger.LogError(ex, "Error processing");
-    command.ResponseTask?.TrySetException(ex); // ✅ Propagar al productor
-}
-```
-
-## Conclusión
-
-Los **Channels** representan una evolución significativa en cómo manejamos la comunicación asíncrona en .NET. Lo que tradicionalmente requería código complejo con locks, semáforos y manejo manual de concurrencia, ahora se puede lograr con una API limpia, segura y de alto rendimiento.
-
 ### ¿Por qué usar Channels?
 
 A lo largo de este tutorial, hemos visto cómo Channels ofrece ventajas significativas:
@@ -376,19 +319,19 @@ A lo largo de este tutorial, hemos visto cómo Channels ofrece ventajas signific
 
 ### Cuándo **SÍ** usar Channels
 
-✅ **Comunicación intra-proceso**: Coordinación entre componentes de la misma aplicación  
-✅ **Alta frecuencia**: Miles de mensajes por segundo con mínimo overhead  
-✅ **Backpressure crítico**: Necesitas controlar la velocidad de producción/consumo  
-✅ **Simplicidad operacional**: Quieres evitar dependencias de infraestructura externa  
-✅ **Desarrollo rápido**: Prototipado y desarrollo local sin complicaciones
+- ✅ **Comunicación intra-proceso**: Coordinación entre componentes de la misma aplicación  
+- ✅ **Alta frecuencia**: Miles de mensajes por segundo con mínimo overhead  
+- ✅ **Backpressure crítico**: Necesitas controlar la velocidad de producción/consumo  
+- ✅ **Simplicidad operacional**: Quieres evitar dependencias de infraestructura externa  
+- ✅ **Desarrollo rápido**: Prototipado y desarrollo local sin complicaciones
 
 ### Cuándo **NO** usar Channels
 
-❌ **Comunicación inter-proceso**: Si necesitas comunicar múltiples aplicaciones/servicios  
-❌ **Persistencia requerida**: Si los mensajes deben sobrevivir reinicios  
-❌ **Distribución geográfica**: Múltiples datacenters o regiones  
-❌ **Garantías de entrega avanzadas**: Exactly-once, dead letter queues, retries configurables  
-❌ **Monitoreo centralizado**: Necesitas observabilidad empresarial de mensajería
+- ❌ **Comunicación inter-proceso**: Si necesitas comunicar múltiples aplicaciones/servicios  
+- ❌ **Persistencia requerida**: Si los mensajes deben sobrevivir reinicios  
+- ❌ **Distribución geográfica**: Múltiples datacenters o regiones  
+- ❌ **Garantías de entrega avanzadas**: Exactly-once, dead letter queues, retries configurables  
+- ❌ **Monitoreo centralizado**: Necesitas observabilidad empresarial de mensajería
 
 ### Impacto en tu arquitectura
 
@@ -397,24 +340,6 @@ Este patrón es especialmente valioso cuando:
 - Quieres **reducir costos** de infraestructura eliminando dependencias de message brokers
 - Necesitas **optimizar performance** con procesamiento en memoria
 - Buscas **simplicidad operacional** sin sacrificar escalabilidad vertical
-
-### Key Takeaways
-
-**Los 5 principios esenciales:**
-
-1. ✅ **Usa Bounded Channels** con `FullMode.Wait` para prevenir OutOfMemory
-2. ✅ **Patrón WaitToReadAsync + TryRead** para máximo throughput
-3. ✅ **Configura SingleWriter/SingleReader** cuando sea posible para mejor performance
-4. ✅ **Siempre llama Complete()** para señalizar fin de producción
-5. ✅ **Propaga errores con TrySetException()** para debugging efectivo
-
-### Evolución del patrón
-
-Este proyecto es una base sólida que puedes extender según tus necesidades:
-- **Múltiples consumidores**: Escala horizontalmente agregando más BackgroundServices
-- **Priorización**: Implementa múltiples channels con diferentes prioridades
-- **Monitoring**: Integra métricas de performance y observabilidad
-- **Resiliencia**: Agrega retry policies y circuit breakers
 
 Los Channels de .NET demuestran que no siempre necesitas herramientas complejas para resolver problemas complejos. A veces, la solución más elegante es la que viene incorporada en tu framework.
 ## Próximos Pasos
