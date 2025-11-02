@@ -7,7 +7,8 @@ public static class JobEndpoints
 {
     public static IEndpointRouteBuilder MapJobEndpoints(this IEndpointRouteBuilder app)
     {
-        var jobGroup = app.MapGroup("api/job");
+        var jobGroup = app.MapGroup("api/job")
+            .WithTags("Job");
 
         /// <summary>
         /// Inicia el background job

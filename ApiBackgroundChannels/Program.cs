@@ -20,6 +20,15 @@ builder.Services.AddSingleton(Channel.CreateBounded<JobCommand>(
 
 // Registrar el Background Service
 builder.Services.AddHostedService<JobProcessor>();
+builder.Services.AddHostedService<NotificationProcessor>();
+
+builder.Services.AddSingleton(Channel.CreateBounded<NotificationCommand>(
+    new BoundedChannelOptions(100)
+    {
+        FullMode = BoundedChannelFullMode.Wait,
+        SingleWriter = false,
+        SingleReader = true
+    }));
 
 var app = builder.Build();
 
@@ -33,5 +42,6 @@ app.UseHttpsRedirection();
 
 // Map endpoints
 app.MapJobEndpoints();
+app.MapNotificationEndpoints();
 
 app.Run();
