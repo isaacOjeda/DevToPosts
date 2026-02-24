@@ -8,7 +8,7 @@ Al momento de escribir este artículo, MAF está en **public preview**, disponib
 
 En este artículo vamos a aprender los conceptos fundamentales del framework y a construir algo concreto: una API con ASP.NET Core 10 que expone un chatbot de soporte técnico capaz de responder preguntas basándose en documentación Markdown interna, manteniendo el contexto de la conversación entre mensajes.
 
-> El código completo está disponible en [GitHub](#).
+> El código completo está disponible en [GitHub](https://github.com/isaacOjeda/DevToPosts/tree/main/AgentFramework/SupportBot).
 
 ---
 
