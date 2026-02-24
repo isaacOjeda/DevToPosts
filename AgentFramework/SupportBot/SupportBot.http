@@ -1,0 +1,70 @@
+@baseUrl = https://localhost:7193
+
+### Turno 1 - Saludo inicial
+POST {{baseUrl}}/chat
+Content-Type: application/json
+
+{
+  "sessionId": "usuario-123",
+  "message": "Hola, no puedo entrar al sistema"
+}
+
+### Turno 2 - Continuación de sesión (contraseña olvidada)
+POST {{baseUrl}}/chat
+Content-Type: application/json
+
+{
+  "sessionId": "usuario-123",
+  "message": "Creo que olvidé mi contraseña"
+}
+
+### Turno 3 - Pregunta sobre facturación (misma sesión)
+POST {{baseUrl}}/chat
+Content-Type: application/json
+
+{
+  "sessionId": "usuario-123",
+  "message": "¿Cómo genero una factura?"
+}
+
+### Turno 4 - Pregunta sobre reportes (misma sesión)
+POST {{baseUrl}}/chat
+Content-Type: application/json
+
+{
+  "sessionId": "usuario-123",
+  "message": "¿Qué tipos de reportes puedo generar?"
+}
+
+### Sesión independiente - Bloqueo de cuenta
+POST {{baseUrl}}/chat
+Content-Type: application/json
+
+{
+  "sessionId": "usuario-456",
+  "message": "Mi cuenta está bloqueada, ¿qué hago?"
+}
+
+### Eliminar sesión usuario-123
+DELETE {{baseUrl}}/chat/usuario-123
+
+### Eliminar sesión usuario-456
+DELETE {{baseUrl}}/chat/usuario-456
+
+### Validación - SessionId vacío (debe retornar 400)
+POST {{baseUrl}}/chat
+Content-Type: application/json
+
+{
+  "sessionId": "",
+  "message": "Hola"
+}
+
+### Validación - Message vacío (debe retornar 400)
+POST {{baseUrl}}/chat
+Content-Type: application/json
+
+{
+  "sessionId": "usuario-test",
+  "message": ""
+}
