@@ -9,8 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 // DI
 builder.Services.AddSingleton<SupportAgentFactory>();
 builder.Services.AddSingleton<InMemorySessionStore>();
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+app.UseStaticFiles();
 
 // POST /chat
 app.MapPost("/chat", async (
@@ -55,5 +58,7 @@ app.MapDelete("/chat/{sessionId}", (
     sessionStore.DeleteSession(sessionId);
     return Results.NoContent();
 });
+
+app.MapRazorPages();
 
 app.Run();
