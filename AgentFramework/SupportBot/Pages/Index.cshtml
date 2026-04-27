@@ -1,0 +1,170 @@
+@page
+@model SupportBot.Pages.IndexModel
+@{
+    ViewData["Title"] = "SupportBot";
+}
+
+<div class="flex flex-col h-screen">
+    <!-- Header -->
+    <header class="flex-shrink-0 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center shadow-sm">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-base font-semibold text-gray-900 dark:text-white leading-tight">SupportBot</h1>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Asistente de soporte interno</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <!-- New Chat Button -->
+                <button id="btn-new-chat"
+                        title="Nueva conversación"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg
+                               text-gray-700 dark:text-gray-200
+                               bg-gray-100 dark:bg-gray-800
+                               hover:bg-gray-200 dark:hover:bg-gray-700
+                               transition-colors duration-150">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span class="hidden sm:inline">Nuevo Chat</span>
+                </button>
+
+                <!-- Dark Mode Toggle -->
+                <button id="btn-theme-toggle"
+                        title="Cambiar tema"
+                        class="p-2 rounded-lg text-gray-500 dark:text-gray-400
+                               hover:bg-gray-100 dark:hover:bg-gray-800
+                               transition-colors duration-150">
+                    <!-- Sun icon (visible in dark mode) -->
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <!-- Moon icon (visible in light mode) -->
+                    <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Messages Area -->
+    <main id="messages-container" class="flex-1 overflow-y-auto scroll-smooth">
+        <div id="messages" class="max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-4">
+            <!-- Welcome message (shown initially) -->
+            <div id="welcome-screen" class="flex flex-col items-center justify-center text-center py-16 sm:py-24">
+                <div class="w-16 h-16 rounded-2xl bg-brand-100 dark:bg-brand-900/40 flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-brand-600 dark:text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                </div>
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Bienvenido a SupportBot</h2>
+                <p class="text-gray-500 dark:text-gray-400 max-w-md text-sm leading-relaxed mb-8">
+                    Soy tu asistente de soporte técnico interno. Puedo ayudarte con temas de accesos, facturación, reportes y más.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-lg">
+                    <button onclick="sendQuickMessage('¿Cómo puedo restablecer mi contraseña?')"
+                            class="quick-prompt px-4 py-3 text-sm text-left rounded-xl border border-gray-200 dark:border-gray-700
+                                   bg-white dark:bg-gray-800/50 text-gray-700 dark:text-gray-300
+                                   hover:border-brand-300 dark:hover:border-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20
+                                   transition-all duration-150">
+                        <span class="block text-xs text-gray-400 dark:text-gray-500 mb-1">Accesos</span>
+                        ¿Cómo restablecer mi contraseña?
+                    </button>
+                    <button onclick="sendQuickMessage('¿Cómo genero una factura?')"
+                            class="quick-prompt px-4 py-3 text-sm text-left rounded-xl border border-gray-200 dark:border-gray-700
+                                   bg-white dark:bg-gray-800/50 text-gray-700 dark:text-gray-300
+                                   hover:border-brand-300 dark:hover:border-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20
+                                   transition-all duration-150">
+                        <span class="block text-xs text-gray-400 dark:text-gray-500 mb-1">Facturación</span>
+                        ¿Cómo genero una factura?
+                    </button>
+                    <button onclick="sendQuickMessage('¿Qué tipos de reportes hay disponibles?')"
+                            class="quick-prompt px-4 py-3 text-sm text-left rounded-xl border border-gray-200 dark:border-gray-700
+                                   bg-white dark:bg-gray-800/50 text-gray-700 dark:text-gray-300
+                                   hover:border-brand-300 dark:hover:border-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20
+                                   transition-all duration-150">
+                        <span class="block text-xs text-gray-400 dark:text-gray-500 mb-1">Reportes</span>
+                        ¿Qué reportes hay disponibles?
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="typing-indicator" class="hidden max-w-3xl mx-auto px-4 sm:px-6 pb-4">
+            <div class="flex items-start gap-3">
+                <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-brand-100 dark:bg-brand-900/40 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-brand-600 dark:text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                </div>
+                <div class="px-4 py-3 rounded-2xl rounded-tl-sm bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <div class="flex items-center gap-1.5">
+                        <span class="typing-dot w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full"></span>
+                        <span class="typing-dot w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full"></span>
+                        <span class="typing-dot w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Input Area -->
+    <footer class="flex-shrink-0 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 py-3">
+            <form id="chat-form" class="flex items-end gap-3">
+                <div class="flex-1 relative">
+                    <textarea id="message-input"
+                              rows="1"
+                              placeholder="Escribe tu mensaje..."
+                              class="w-full resize-none rounded-xl border border-gray-300 dark:border-gray-600
+                                     bg-gray-50 dark:bg-gray-800
+                                     text-gray-900 dark:text-white
+                                     placeholder-gray-400 dark:placeholder-gray-500
+                                     px-4 py-3 pr-12
+                                     text-sm leading-relaxed
+                                     focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+                                     transition-colors duration-150
+                                     max-h-36 overflow-y-auto"></textarea>
+                </div>
+                <button id="btn-send"
+                        type="submit"
+                        disabled
+                        class="flex-shrink-0 w-10 h-10 rounded-xl
+                               bg-brand-600 hover:bg-brand-700
+                               disabled:bg-gray-300 dark:disabled:bg-gray-700
+                               disabled:cursor-not-allowed
+                               text-white
+                               flex items-center justify-center
+                               transition-all duration-150
+                               shadow-sm hover:shadow-md disabled:shadow-none">
+                    <!-- Send icon -->
+                    <svg id="send-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 19V5m0 0l-7 7m7-7l7 7" />
+                    </svg>
+                    <!-- Loading spinner (hidden by default) -->
+                    <svg id="send-spinner" class="w-5 h-5 animate-spin hidden" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                </button>
+            </form>
+            <p class="text-xs text-gray-400 dark:text-gray-500 text-center mt-2">
+                SupportBot puede cometer errores. Verifica la información importante.
+            </p>
+        </div>
+    </footer>
+</div>

@@ -1,0 +1,157 @@
+/* ===== Theme Transitions ===== */
+html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ===== Custom Scrollbar ===== */
+#messages-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+#messages-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#messages-container::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.4);
+    border-radius: 3px;
+}
+
+#messages-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.6);
+}
+
+.dark #messages-container::-webkit-scrollbar-thumb {
+    background-color: rgba(75, 85, 99, 0.5);
+}
+
+.dark #messages-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(75, 85, 99, 0.8);
+}
+
+/* Firefox scrollbar */
+#messages-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.4) transparent;
+}
+
+.dark #messages-container {
+    scrollbar-color: rgba(75, 85, 99, 0.5) transparent;
+}
+
+/* ===== Typing Indicator Animation ===== */
+.typing-dot {
+    animation: typing-bounce 1.4s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing-bounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+/* ===== Message Entrance Animation ===== */
+.message-bubble {
+    animation: message-in 0.3s ease-out;
+}
+
+@keyframes message-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Textarea Auto-resize ===== */
+#message-input {
+    field-sizing: content;
+    min-height: 44px;
+}
+
+/* Fallback for browsers without field-sizing */
+@supports not (field-sizing: content) {
+    #message-input {
+        overflow-y: hidden;
+    }
+}
+
+/* ===== Error Message ===== */
+.error-message {
+    animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
+/* ===== Welcome screen fade out ===== */
+.fade-out {
+    animation: fade-out 0.2s ease-out forwards;
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+}
+
+/* ===== Bot message content formatting ===== */
+.bot-content p {
+    margin-bottom: 0.5em;
+}
+
+.bot-content p:last-child {
+    margin-bottom: 0;
+}
+
+.bot-content ul, .bot-content ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+}
+
+.bot-content li {
+    margin-bottom: 0.25em;
+}
+
+.bot-content strong {
+    font-weight: 600;
+}
+
+.bot-content code {
+    background: rgba(0, 0, 0, 0.06);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.875em;
+}
+
+.dark .bot-content code {
+    background: rgba(255, 255, 255, 0.1);
+}
