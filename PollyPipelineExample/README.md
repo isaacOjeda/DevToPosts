@@ -395,12 +395,12 @@ Con el tiempo, es común sumar otras estrategias según el caso:
 
 ## Cuándo NO usar retry
 
-Este punto muchas veces queda corto en los artículos, pero es de los más importantes.
+Este punto muchas veces queda corto, pero es de los más importantes.
 
 No deberías aplicar retry de forma automática cuando:
 
 - el error es permanente
-- la operación no es segura para repetir
+- la operación no es segura para repetir (no es idempotente)
 - cada intento adicional empeora la congestión
 - el costo de esperar más supera el beneficio
 - el usuario necesita una respuesta rápida y explícita, no varios segundos de insistencia
@@ -423,7 +423,7 @@ Como mínimo, conviene tener visibilidad sobre esto:
 Eso te ayuda a responder preguntas concretas:
 
 - ¿estoy absorbiendo fallos ocasionales o tapando un problema más serio?
-- ¿mi política de retry está bien calibrada o está agregando demasiada espera?
+- ¿mi política de retry está bien definida o está agregando demasiada espera?
 - ¿hay un servicio externo que se está degradando más de lo que pensábamos?
 
 Polly te deja enganchar callbacks como `OnRetry`, y desde ahí puedes registrar eventos, emitir métricas o enriquecer trazas distribuidas. En local alcanza con un `Console.WriteLine`, pero en producción lo ideal es que esos eventos terminen en tu stack de observabilidad.
@@ -467,33 +467,6 @@ public class ResilientBlobUploader
 ```
 
 Observa algo importante: no se manejan todos los códigos de error, solo los que realmente sugieren una condición temporal o recuperable.
-
-## Polly v7 vs Polly v8
-
-Si usaste Polly antes, este cambio de API es el que más se nota:
-
-| Polly v7 | Polly v8 |
-|----------|----------|
-| `Policy.Handle<T>()` | `new PredicateBuilder().Handle<T>()` |
-| `Policy.WaitAndRetryAsync()` | `new ResiliencePipelineBuilder().AddRetry()` |
-| `IAsyncPolicy` | `ResiliencePipeline` |
-| `policy.ExecuteAsync()` | `pipeline.ExecuteAsync()` |
-
-En v8 la sensación general es que todo queda más composable y más consistente cuando empezás a combinar estrategias.
-
-## ¿Polly directo o Microsoft.Extensions.Http.Resilience?
-
-No compiten exactamente. Más bien cubren escenarios distintos.
-
-| Escenario | Qué conviene usar |
-|-----------|-------------------|
-| Llamadas HTTP con `HttpClient` | `Microsoft.Extensions.Http.Resilience` |
-| Consultas o operaciones de base de datos | Polly directamente |
-| Subida de archivos | Polly directamente |
-| Operaciones gRPC | Polly directamente |
-| Cualquier operación async no HTTP | Polly directamente |
-
-Si estás en el mundo `HttpClient`, la integración de Microsoft te resuelve mucho. Si querés resiliencia para cualquier otra operación, Polly directo sigue siendo una herramienta excelente.
 
 ## Ejecutar el ejemplo
 
