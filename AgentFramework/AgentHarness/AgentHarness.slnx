@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="PepInvestigationAgent/PepInvestigationAgent.csproj" />
+  <Project Path="TopicResearchAgent/TopicResearchAgent.csproj" />
+</Solution>
