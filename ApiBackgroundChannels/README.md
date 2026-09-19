@@ -283,17 +283,6 @@ Channel<ProcessedData> outputChannel;
 // Stage 1: Raw → Validated → Stage 2: Validated → Enriched
 ```
 
-## Ventajas vs Alternativas
-
-| Escenario     | Channel              | Queue Externo     |
-| ------------- | -------------------- | ----------------- |
-| Performance   | ⚡ Muy alta           | 🐢 Red overhead   |
-| Configuración | ✅ Cero               | ❌ Infraestructura |
-| Backpressure  | ✅ Integrado          | ⚠️ Manual         |
-| Async/Await   | ✅ Nativo (ValueTask) | ⚠️ Depende        |
-| Escalabilidad | 🏠 Single-app        | 🌍 Multi-app      |
-| Memoria       | ✅ Bounded options    | ⚠️ Depende        |
-
 **Usa Channels cuando:**
 - ✅ Comunicación dentro de la misma aplicación
 - ✅ Necesitas alta performance y bajo latency
@@ -317,22 +306,6 @@ A lo largo de este tutorial, hemos visto cómo Channels ofrece ventajas signific
 4. **Control**: Backpressure automático previene sobrecarga del sistema
 5. **Flexibilidad**: Configuración granular según tus necesidades específicas
 
-### Cuándo **SÍ** usar Channels
-
-- ✅ **Comunicación intra-proceso**: Coordinación entre componentes de la misma aplicación  
-- ✅ **Alta frecuencia**: Miles de mensajes por segundo con mínimo overhead  
-- ✅ **Backpressure crítico**: Necesitas controlar la velocidad de producción/consumo  
-- ✅ **Simplicidad operacional**: Quieres evitar dependencias de infraestructura externa  
-- ✅ **Desarrollo rápido**: Prototipado y desarrollo local sin complicaciones
-
-### Cuándo **NO** usar Channels
-
-- ❌ **Comunicación inter-proceso**: Si necesitas comunicar múltiples aplicaciones/servicios  
-- ❌ **Persistencia requerida**: Si los mensajes deben sobrevivir reinicios  
-- ❌ **Distribución geográfica**: Múltiples datacenters o regiones  
-- ❌ **Garantías de entrega avanzadas**: Exactly-once, dead letter queues, retries configurables  
-- ❌ **Monitoreo centralizado**: Necesitas observabilidad empresarial de mensajería
-
 ### Impacto en tu arquitectura
 
 Este patrón es especialmente valioso cuando:
@@ -342,6 +315,7 @@ Este patrón es especialmente valioso cuando:
 - Buscas **simplicidad operacional** sin sacrificar escalabilidad vertical
 
 Los Channels de .NET demuestran que no siempre necesitas herramientas complejas para resolver problemas complejos. A veces, la solución más elegante es la que viene incorporada en tu framework.
+
 ## Próximos Pasos
 
 ¿Listo para llevar este conocimiento al siguiente nivel? Aquí tienes algunas ideas para expandir este proyecto:
@@ -355,18 +329,7 @@ builder.Services.AddHostedService<JobProcessor>(); // Worker 3
 ```
 **Aprenderás:** Paralelización, distribución de carga, sincronización entre workers
 
-### 2. **Agregar Sistema de Prioridades** 
-```csharp
-public enum JobPriority { Low, Normal, High, Critical }
-
-// Crear channels separados por prioridad
-var highPriorityChannel = Channel.CreateBounded<JobCommand>(50);
-var normalPriorityChannel = Channel.CreateBounded<JobCommand>(100);
-var lowPriorityChannel = Channel.CreateBounded<JobCommand>(200);
-```
-**Aprenderás:** Gestión de prioridades, routing inteligente, SLA por prioridad
-
-### 3. **Integrar Observabilidad** 
+### 2. **Integrar Observabilidad** 
 ```csharp
 // Métricas con System.Diagnostics.Metrics
 var meter = new Meter("BackgroundJobs");
@@ -376,7 +339,7 @@ var queueDepth = meter.CreateObservableGauge("queue_depth",
 ```
 **Aprenderás:** OpenTelemetry, métricas personalizadas, dashboards con Grafana/Prometheus
 
-### 4. **Implementar Persistencia** 
+### 3. **Implementar Persistencia** 
 ```csharp
 // Guardar estado en caso de restart
 public class PersistentJobProcessor : BackgroundService
@@ -393,7 +356,7 @@ public class PersistentJobProcessor : BackgroundService
 ```
 **Aprenderás:** State management, recovery strategies, durabilidad
 
-### 5. **Agregar Pipeline de Procesamiento** 
+### 4. **Agregar Pipeline de Procesamiento** 
 ```csharp
 // Pipeline multi-etapa
 var rawChannel = Channel.CreateBounded<RawData>(100);
@@ -409,7 +372,7 @@ builder.Services.AddHostedService<PersistenceProcessor>();
 ```
 **Aprenderás:** Pipeline pattern, ETL processes, data transformation
 
-### 6. **Implementar Rate Limiting Avanzado** 
+### 5. **Implementar Rate Limiting Avanzado** 
 ```csharp
 // Rate limiter con ventanas deslizantes
 public class RateLimitedJobProcessor : BackgroundService
@@ -431,7 +394,7 @@ public class RateLimitedJobProcessor : BackgroundService
 ```
 **Aprenderás:** Rate limiting patterns, token bucket, leaky bucket
 
-### 7. **Crear Dashboard de Monitoreo** 
+### 6. **Crear Dashboard de Monitoreo** 
 ```csharp
 // SignalR para updates en tiempo real
 builder.Services.AddSignalR();
@@ -445,7 +408,7 @@ await _hubContext.Clients.All.SendAsync("JobStatusUpdate", new {
 ```
 **Aprenderás:** Real-time updates, SignalR, live dashboards
 
-### 8. **Añadir Resiliencia** 
+### 7. **Añadir Resiliencia** 
 ```csharp
 // Polly para retry policies
 var retryPolicy = Policy
@@ -460,7 +423,7 @@ await retryPolicy.ExecuteAsync(async () =>
 ```
 **Aprenderás:** Retry patterns, circuit breakers, fallback strategies
 
-### 9. **Implementar Health Checks** 
+### 8. **Implementar Health Checks** 
 ```csharp
 // Health check para el channel
 builder.Services.AddHealthChecks()
@@ -480,7 +443,7 @@ public class ChannelHealthCheck : IHealthCheck
 ```
 **Aprenderás:** Health monitoring, readiness/liveness probes, Kubernetes integration
 
-### 10. **Migrar a Arquitectura Distribuida** 
+### 9. **Migrar a Arquitectura Distribuida** 
 ```csharp
 // Cuando crezcas más allá de un solo servidor
 // Considera migrar a:
